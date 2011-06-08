@@ -1,0 +1,33 @@
+Tapper
+======
+
+Central project for github overview, wiki, changelog, etc.
+
+
+About Tapper 
+============
+
+Tapper is an infrastructure for all aspects of testing 
+inclusive Operating Systems and Virtualization.
+
+Tapper contains
+
+ - Automation
+ - Machine Scheduling
+ - Command line utils
+ - Web Frontend application
+ - Support for writing tests
+ - Powerful result evaluation API
+ - Testplan support with TaskJuggler
+ - Many use-cases from tracking test results to
+   benchmarking to full OS testing including virtualization
+
+More information about Tapper:
+
+ - https://github.com/amd/Tapper-Doc/
+ - http://search.cpan.org/~amd/Tapper-Doc/
+
+Other Tapper subprojects:
+
+ - https://github.com/amd
+ - http://search.cpan.org/~amd
