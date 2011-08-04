@@ -1,0 +1,12 @@
+# -*- mode: yaml -*-
+
+# GitMeta spec for Tapper repositories on github
+# See
+#   http://search.cpan.org/~mschilli/GitMeta/lib/GitMeta.pm
+
+# As long as there is only Tapper in account <amd> we take it all
+
+-
+ type: Github
+ user: amd
+
