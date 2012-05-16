@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+4.0       2012-05-16
         * Automation
         - better linux32 chroot/exec support
         - persistent automation layer, based on event-queues
