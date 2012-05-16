@@ -62,3 +62,7 @@ Revision history for {{$dist->name}}
 
         * Tapper
         - zero-content lib as primary entry point for Tapper info
+
+3.0     2011-04-08
+        - for the initial Tapper feature overview (version 3) see
+          http://www.amd64.org/support/automated-test-infrastructure.html
