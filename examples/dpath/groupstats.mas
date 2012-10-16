@@ -1,0 +1,18 @@
+#! mason debug=1 <<EOTEMPLATE
+# -*- mode: cperl -*-
+
+% my $SUITE = "CTCS";
+# ----------------------------------------------------------------------
+# F=groupstats ; netcat tapper 7358 < $F.mas | less
+# ----------------------------------------------------------------------
+
+% my @time  = reportdata '{ id => 23132 } :: /groupstats';
+% foreach my $t (@time) {
+        <% Dumper($t) %>
+% }
+
+% @time  = reportdata '{ id => 23132 } :: /';
+% foreach my $t (@time) {
+        <% Dumper($t) %>
+% }
+EOTEMPLATE

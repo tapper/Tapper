@@ -1,0 +1,21 @@
+#! mason debug=1 <<EOTEMPLATE
+# -*- mode: cperl -*-
+% use DateTime::Format::Natural;
+% my $parser = new DateTime::Format::Natural;
+% my $today  = $parser->parse_datetime("today at midnight");
+% my $from   = $today->clone->subtract( days => 2 );
+
+ From: <% $from %> .. <% $today %>
+ ---------------------------------
+
+% my $SUITE = "CTCS";
+# -----------------------------------------------
+# F=limit_by_date ; netcat tapper 7358 < $F.mas
+# -----------------------------------------------
+
+% my @ratio  = reportdata "{ suite_name => 'CTCS', created_at => { '>', '$from' } } :: /report/success_ratio";
+
+% foreach my $r (@ratio) {
+        <% $r %>
+% }
+EOTEMPLATE

@@ -1,0 +1,24 @@
+#! mason debug=1 <<EOTEMPLATE
+% # -*- mode: cperl -*-
+% my $SUITE = "CTCS";
+% # ----------------------------------------------
+% # F=warmup2_json ; netcat tapper 7358 < $F.mas
+% # ----------------------------------------------
+% my @res  = reportdata '{ id => "18257" } :: /';
+
+JSON:
+<% to_json( unbless \@res ) %>
+YAML:
+<% Dump(\@res) %>
+Dumper:
+<% Dumper(\@res) %>
+
+%# reportgroup_testrun_id not supported yet:
+%#% @res  = reportdata '{  "reportgroup_testrun_id" => "8809" } :: /report';
+%#JSON:
+%#<% to_json(\@res) %>
+%#
+%#Dumper:
+%#<% Dumper(\@res) %>
+
+EOTEMPLATE

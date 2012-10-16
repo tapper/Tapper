@@ -1,0 +1,10 @@
+#! mason debug=1 <<EOTEMPLATE
+
+Hello!
+% my @res = reportdata '{ "suite.name" => "Tapper-Schema" } :: //section/"t/tapper_schema_testrundb"//tap/tests_planned';
+Planned tests:
+% use Data::Dumper;
+% foreach (@res) {
+   <% Dumper( $_ ) %>
+% }
+EOTEMPLATE

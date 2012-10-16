@@ -1,0 +1,9 @@
+#! mason <<EOTEMPLATE
+
+Hello!
+% my @res = reportdata '{ "suite.name" => "Tapper-Reports-Receiver" } :: //section/*[0]/tap/tests_planned';
+Planned tests:
+% foreach (@res) {
+   <% $_ %>
+% }
+EOTEMPLATE

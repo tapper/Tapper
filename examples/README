@@ -1,0 +1,7 @@
+This subdir contains a collection of examples
+for various subsystems of Tapper: query api templates,
+precondition files, testplan files, etc.
+
+It is here to complement the manual without flooding
+it. Maybe once in a while we migrate content over to
+the manual.

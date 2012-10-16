@@ -1,0 +1,42 @@
+#! mason debug=1 <<EOTEMPLATE
+# -*- mode: cperl -*-
+#! /usr/bin/env gnuplot
+
+TITLE = "/proc/interrupts - KernBench/LOC"
+set title TITLE offset char 0, char -1
+set style data linespoints
+set xtics rotate by 45
+set size 0.5, 0.5
+set term png size 1200, 800
+set output "proc-interrupts.png"
+
+plot '-' using 0:2 with steps lt 1 lw 2
+# , '-' using 0:3 with steps lt 2 lw 2
+
+% use 5.010;
+% use strict;
+% use warnings;
+
+% my @res;
+% my @tlb_before;
+% my @tlb_after;
+% my $TOPIC = "LOC";
+% say STDERR "reportdata ... ", ~~localtime;
+%#% @res = reportdata "{ suite_name => 'KernBench'  } :: /results/*/section/stats-proc-interrupts-before/tap/lines/*/_children/*/data/$TOPIC/../../../../../../../../../../../";
+%#% @res = reportdata "{ created_at => { '>', '2009-05-01 00:00' } } :: /results/*/section/stats-proc-interrupts-before/tap/lines/*/_children/*/data/$TOPIC/../../../../../../../../../../../";
+%#% @res = reportdata "{ id => [ -and => { '>', 18870 }, { '<', 18880 } ] } :: /results/*/section/stats-proc-interrupts-before/tap/lines/*/_children/*/data/$TOPIC/../../../../../../../../../../../";
+%#% @res = reportdata "{ suite_name => 'KernBench' } :: /results/*/section/stats-proc-interrupts-before/tap/lines/*/_children/*/data/$TOPIC/../../../../../../../../../../../";
+% @res = reportdata "{  } :: /results/*/section/stats-proc-interrupts-before/tap/lines/*/_children/*/data/$TOPIC/../../../../../../../../../../../";
+%#% @res = ( 18619 );
+%# say STDERR Dumper($res[0]);
+% say STDERR "dpath foreach result ... ", ~~localtime;
+% foreach (@res) {
+%   my ($tlb_before) = @{ $_ ~~ dpath "/results/*/section/stats-proc-interrupts-before/tap/lines/*/_children/*/data/$TOPIC/CPU0" };
+%   my ($tlb_after)  = @{ $_ ~~ dpath "/results/*/section/stats-proc-interrupts-after/tap/lines/*/_children/*/data/$TOPIC/CPU0"  };
+%   if ($tlb_before and $tlb_after) {
+        <% $_->{report}{id} %> <% $tlb_after - $tlb_before %>
+%   }
+% }
+% say STDERR "done ", ~~localtime;
+
+EOTEMPLATE

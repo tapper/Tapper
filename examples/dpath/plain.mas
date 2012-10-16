@@ -1,0 +1,4 @@
+#! mason <<AFFE
+% my $world = "Tapper";
+Hello <% $world %>!
+AFFE

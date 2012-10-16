@@ -1,0 +1,9 @@
+#! mason <<EOTEMPLATE
+% use Data::DPath 'dpath';
+% use Data::Dumper;
+% use DateTime;
+% my $dt1 = DateTime->today();
+% my $dt2 = DateTime->today()->subtract( hours => 12);
+% my @test = reportdata "{ suite_name => {'like', 'Topic-%'}, created_at => { -between => [ '$dt2' , '$dt1' ] } } :: /";
+<% Dumper(@test) %>
+EOTEMPLATE

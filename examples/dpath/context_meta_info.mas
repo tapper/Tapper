@@ -1,0 +1,35 @@
+#! mason debug=1 <<EOTEMPLATE
+# -*- mode: cperl -*-
+% use DateTime::Format::Natural;
+% my $parser = new DateTime::Format::Natural;
+% my $today  = $parser->parse_datetime("today at midnight");
+% my $from   = $today->clone->subtract( days => 0.5 );
+
+ From: <% $from %> .. <% $today %>
+ ---------------------------------
+
+% my $SUITE = "CTCS";
+# -----------------------------------------------
+# F=context_meta_info ; netcat tapper 7358 < $F.mas
+# -----------------------------------------------
+
+Single report meta information:
+-------------------------------
+
+%# % my @meta  = reportdata "{ suite_name => 'CTCS', created_at => { '>', '$from' } } :: /results//tap/../meta";
+%#
+%# % foreach (@meta) {
+%#         <% Dumper($_) %>
+%# % }
+
+Complete group context information for each report:
+---------------------------------------------------
+
+% my @context  = reportdata "{ id => '21439' } :: /groupcontext";
+
+% foreach (@context) {
+        <% Dumper($_) %>
+% }
+
+
+EOTEMPLATE

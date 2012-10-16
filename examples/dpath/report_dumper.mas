@@ -1,0 +1,9 @@
+#! mason debug=1 <<EOTEMPLATE
+% use DateTime;
+% my $dt1 = DateTime->today();
+% my $dt2 = DateTime->today()->subtract( weeks => 1);
+% my @t  = reportdata "{ suite_name => 'Daily-Report', created_at => { -between => ['$dt2' , '$dt1' ]  }} :: /";
+% foreach my $run (@t){
+<% Dump(\$run) %>
+% }
+EOTEMPLATE

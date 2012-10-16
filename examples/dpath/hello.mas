@@ -1,0 +1,9 @@
+#! mason <<EOTEMPLATE
+% my $world = "Tapper";
+Hello <% $world %>!
+% my @res = reportdata '{ "suite.name" => "power_msr_test" } :: //tap/tests_planned';
+Planned tests:
+% foreach (@res) {
+   <% $_ %>
+% }
+EOTEMPLATE

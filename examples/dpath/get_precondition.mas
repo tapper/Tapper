@@ -1,0 +1,11 @@
+#! mason <<EOTEMPLATE
+This is just an idea and does not work yet. Don't use this template
+% exit;
+% use DateTime;
+% use Data::Dumper;
+% my $dt2 = DateTime->now()->subtract( weeks => 1);
+% my $dt1 = DateTime->now();
+% my @collected_data;
+% @collected_data = testrundata "{id => 122345 } :: //precondition";
+<% $collected_data[0] %>
+EOTEMPLATE

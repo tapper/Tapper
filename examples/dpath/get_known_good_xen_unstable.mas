@@ -1,0 +1,9 @@
+#! mason <<EOTEMPLATE
+% use DateTime;
+% use Data::Dumper;
+% my $dt2 = DateTime->now()->subtract( weeks => 1);
+% my $dt1 = DateTime->now();
+% my @collected_data;
+% @collected_data = reportdata "{suite_name => {'like', 'Topic-xen-unstable'}, created_at => { -between => ['$dt2' , '$dt1' ]  } } :: //section/MCP-overview//summary/status[value ~~ 'PASS']/../../../meta/reportgroup-testrun";
+<% $collected_data[0] %>
+EOTEMPLATE

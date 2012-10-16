@@ -1,0 +1,12 @@
+#! tt debug=1 puresqlabstract=1 <<ENDOFTEMPLATE
+[%-#                                                       -%]
+[%-# ----------------------------------------------------- -%]
+[%-# Execute this via Tapper and Bash like:                -%]
+[%-#   cat suite-percentage.tt | netcat -q5 -w5 tapper 7358    -%]
+[%-# ----------------------------------------------------- -%]
+[%-#                                                       -%]
+[%- failpercentages = reportdata('{ "suite.name" => "example-suite-name" } :: //failurecount') %]
+[%- FOREACH percent IN failpercentages %]
+  [% percent %]
+[%- END %]
+ENDOFTEMPLATE

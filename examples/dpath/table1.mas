@@ -1,0 +1,78 @@
+#! mason debug=1 <<EOTEMPLATE
+% use DateTime;
+% use Data::Dumper;
+% my $dt1 = DateTime->today();
+% my $dt2 = DateTime->today()->subtract( weeks => 1);
+% my @collected_data = reportdata "{suite_name => {'like', 'Topic-xen%'}, created_at => { -between => ['$dt2' , '$dt1' ]  } } :: /";
+% my %results;
+% foreach my $run_temp (@collected_data){
+%   my $xen_cs    = $run_temp ~~ dpath "//xen_changeset";
+%   my $xen_vers  = $run_temp ~~ dpath "//xen_version";
+%   my $ratio     = $run_temp ~~ dpath "//success_ratio";
+%   my $platform  = $run_temp ~~ dpath "//hardwaredb/key_word";
+%   my $cpu       = $run_temp ~~ dpath "/report//hardwaredb/cpus/*/revision";
+%   my $report_id = $run_temp ~~ dpath "//report/id";
+%   if ( $xen_cs->[0] ){
+%       $xen_cs->[0] =~ s/:.*//;
+%       $xen_vers->[0] =~ s/-[^u].*//;
+%       my $platf_str = $platform->[0].' ('.$cpu->[0].')';
+%       if ($ratio->[0] == 100){
+%           $results{$xen_vers->[0]}{$xen_cs->[0]}{$platf_str}{'green'}++;
+%           $results{$xen_vers->[0]}{$xen_cs->[0]}{$platf_str}{'red'} += 0;
+%       } else {
+%           $results{$xen_vers->[0]}{$xen_cs->[0]}{$platf_str}{'red'}++;
+%           $results{$xen_vers->[0]}{$xen_cs->[0]}{$platf_str}{'green'} += 0;
+%       }
+%       push @{$results{$xen_vers->[0]}{$xen_cs->[0]}{$platf_str}{list}}, $report_id->[0]
+%   }
+% }
+
+%# You choose the output
+%#<% Dump(\%results) %>
+<% to_json(unbless \%results) %>
+
+EOTEMPLATE
+
+
+%#  output should always look like this
+%#  table = { 'xen-3.3' => { '1234' => { 'sahara' => { 'red'   => 10,
+%#                                                     'green' => 4,
+%#                                                     'list'  => [1,2,3,4,5,......]
+%#                                                    },
+%#                                       'cheetah' => {'red'   => 0,
+%#                                                     'green' => 8,
+%#                                                     'list'  => [6,7,8,9,10,.....]
+%#                                                    }
+%#                                      },
+%#                           '1235' => { 'sahara' => { 'red'   => 4,
+%#                                                     'green' => 9,
+%#                                                     'list'  => [11,12,13,14,....]
+%#                                                    },
+%#                                       'cheetah' => {'red'   => 15,
+%#                                                     'green' => 10,
+%#                                                     'list'  => [15,16,17,18,....]
+%#                                                    }
+%#                                      }
+%#                          },
+%#            'xen-3.4' => { '2345' => { 'sahara' => { 'red'   => 12,
+%#                                                     'green' => 5,
+%#                                                     'list'  => [20,21,22,23,....]
+%#                                            },
+%#                                       'cheetah' => {'red'   => 0,
+%#                                                     'green' => 8,
+%#                                                     'list'  => [25,26,27,28.....]
+%#                                                    }
+%#                                      },
+%#                           '2346' => { 'sahara' => { 'red'   => 4,
+%#                                                     'green' => 9,
+%#                                                     'list'  => [30,31,32,33,....]
+%#                                                    },
+%#                                       'cheetah' => {'red'   => 15,
+%#                                                     'green' => 10,
+%#                                                     'list'  => [35,36,37,38,....]
+%#                                                    }
+%#                                      }
+%#                          }
+%#         }
+
+# vim:set ft=mason et ts=2 sw=2 sts=2 sta ai si tw=100:

@@ -1,0 +1,11 @@
+#! mason debug=1 <<EOTEMPLATE
+# -*- mode: cperl -*-
+
+% #my @all   = reportdata '{ "suite.name" => "KernBench" } :: //section//stats-proc-interrupts-before/';
+% my @all   = reportdata '{ id => "18942" } :: /';#/section//stats-proc-interrupts-before/';
+% use Data::Dumper;
+% foreach (@all) {
+   <% Dumper($_) %>
+% }
+
+EOTEMPLATE

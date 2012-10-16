@@ -1,0 +1,10 @@
+#! mason debug=1 <<EOTEMPLATE
+%# Usage:
+%#   cat warmup4_kvmpassthrough.mas | netcat -q1 tapper 7358
+% my $affe = "zomtec";
+% my @res  = reportdata '{ suite_name => "KVM-passthrough" } :: /';
+% my @bogomips  = reportdata '{ suite_name => "KVM-passthrough" } :: //description[value eq "- benchmark numbers"]/../_children//data';
+%#<% Dumper(\@res) %>
+%#<% Dumper(\@bogomips) %>
+<% to_json( unbless \@bogomips ) %>
+EOTEMPLATE

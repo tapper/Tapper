@@ -1,0 +1,6 @@
+#! mason debug=1 <<EOTEMPLATE
+% # -*- mode: cperl -*-
+% # F=warmup3_slbench ; netcat tapper 7358 < $F.mas
+% my @res  = reportdata '{ suite_name => "benchmark-perlformance" } :: /';
+<% Dumper(\@res) %>
+EOTEMPLATE
