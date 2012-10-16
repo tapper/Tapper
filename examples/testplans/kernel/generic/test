@@ -1,0 +1,240 @@
+[%#- -*- mode: tt -*- %]
+[%- PROCESS 'include/defaults' -%]
+[% USE Autoformat %]
+[%- IF machine     != '' %][% THROW LEGACY "Use '-Dmachines=...' (plural) now.\n" %][% END -%]
+[%- IF tests_dom0  != '' %][% THROW LEGACY "Use '-Dtest_host=...' now.\n" %][% END -%]
+[%- IF tests_domu  != '' %][% THROW LEGACY "Use '-Dtests_guest=...' now.\n" %][% END -%]
+[%- IF Timeout     != '' %][% THROW LEGACY "Use '-Dtest_timout=...' now.\n" %][% END -%]
+[%- IF tests       != '' %][% THROW AMBIGUITY "Use '-Dtests_host=...'.\n" %][% END -%]
+[%- IF host        != '' %][% THROW AMBIGUITY "Use '-Dmachines=...'.\n" %][% END -%]
+[%- IF hosts       != '' %][% THROW AMBIGUITY "Use '-Dmachines=...'.\n" %][% END -%]
+[%- IF queues      != '' %][% THROW AMBIGUITY "Use '-Dqueue=name' (singular).\n" %][% END -%]
+[%- IF queue.match(',')  %][% THROW AMBIGUITY "Use '-Dqueue=name' (only one queue).\n" %][% END -%]
+[%- IF queue       == '' %][% queue          = 'AdHoc' %][% END -%]
+[%- IF machines    == '' %][% machines       = 'limete' %][% END -%]
+[%- IF distros     == '' %][% distros        = 'baseimage' %][% END -%]
+[%- IF buildserver == '' %][% buildserver    = 'acid' %][% END -%][%# acid=64bit, selen=32bit %]
+[%- IF packages_host == '' %][% packages_host = '' %][% END -%]
+[%- IF tests_host  == '' %][% tests_host     = 'linus_stress' %][% END -%][%# 'hackbench,unixbench,dbench,tiobench,iozone,reaim,aiostress,compilebench' %]
+[%- IF test_timeout == '' %][% test_timeout  = '10800' %][% END -%]
+[%- shorttitle_test_host = BLOCK %][% IF tests_host.match(',') %]MULTI[% ELSE %][% tests_host.replace('.*/([^/]+)$', '$1').replace('^(xen|kvm)-','').replace('\.sh$','').replace('\.t$','').replace('[-_]','') %][% END %][% END -%]
+[%- IF title       == ''    %][% title          = BLOCK %]Kernel[%- IF shorttitle_test_host != '' %]-[% shorttitle_test_host %][% ELSE %][% END %][% END %][% END -%]
+[%- IF builder     == '' && distros == 'baseimage' && kernelpkg == '' %][% builder = 'linus' %][% END -%]
+[% repository = builder %]
+[% type = 'kernel' %]
+[%- AllMachines       = machines.split(',')       || [] -%]
+[%- AllDistros        = distros.split(',')        || [] -%]
+[%- AllPackagesHost   = packages_host.split(',')  || [] -%]
+[%- AllTestsHost      = tests_host.split(',')     || [] -%]
+[%- AllTestsParamsHost = tests_host_params.split(';') || [] -%]
+[%- AllHostBootparams = hostbootparams.split(';') || [] -%][%# SIC, semicolon! We need ',' inside bootparams. -%]
+[% fullname = BLOCK %][% title %][% IF titlesuffix %]-[% titlesuffix %][% END %][% END %]
+[%- IF AllHostBootparams.size == 0 %][%- AllHostBootparams.unshift('') %][% END -%][%# to not empty the loop over it -%]
+###
+### Run a Linux environment with tests.
+### [topic.kernel.generic.test]
+###
+###
+### Name   : [% fullname %]
+### Host   : [% current_SLES11 %]
+###
+### Optional params:
+###
+###   -Dkernelpkg=<filename>     Filename of already existing kernel package;             default: build one
+###   -Dbuilder=<buildkey>       Key what type of kernel to build;                        default: stable3-2
+###   -Dbuilder_changeset=<xyz>  Changeset of kernel to build;                            default: <empt>
+###
+###   -Dhostbootparams=<param>   Kernel boot parameter to host, SEMICOLON[sic] separated; default: <empty>
+###   -Dtest_timeout=<seconds>   Timeout for tests;                                       default: 10800 (3h)
+###
+###   -Dtests_host=<testname>    Workload names, comma separated, see list below;         default: <empt>
+###   -Dtests_host_capture=tap   Capture and send TAP output of host tests;               default: <empty>
+###   -Dpackages_host=<package>  Files to unpack in host, comma separated;                default: <empt>
+###
+###   -Ddistros=<distros>        Host distro names, comma separated; see list below;      default: sles_11.2_64
+
+###   -Dmachines=<machine>       Machine names, comma separated;                          default: limete
+###   -Dqueue=<queue>            Queue to use;                                            default: AdHoc
+###   -Dtitlesuffix=<string>     Suffix to be used in testplan and testrun names;         default: <empty>
+###
+### Available values:
+###
+###   builder:
+[%- FILTER autoformat(all => 1) %]
+###      [% FOREACH m = kernel_builder_list -%][% m %], [% END %]
+[% END %]
+###      Mnemonics:
+###       - "*"     means "use the minor wanted number"
+###   machines:
+[%- FILTER autoformat(all => 1) %]
+###      [% FOREACH m = machine_list -%][% m %], [% END %]
+[% END %]
+###   distros:
+[%- FILTER autoformat(all => 1) %]
+###      [% FOREACH d = distro_list -%][% d %], [% END %]
+[% END %]
+###   tests_host:
+###      - non-path words are interpreted as Autotest subtests:
+###
+[%- FILTER autoformat(all => 1) %]
+###          [% FOREACH t = useful_autotest_tests -%][% t %], [% END %]
+[%- END -%]
+###
+###      - absolute path names, like "/data/tapper/autoreport/mytest.t"
+###        are interpreted as script to execute (and every file inside
+###        that path/* will also be copied)
+###        
+###        
+###
+### Typical command lines (User tapper@tapper):
+###
+###   $ tapper-testrun newtestplan --file /data/tapper/live/testplan/topic/kernel/generic/test
+###   $ tapper-testrun newtestplan --file /data/tapper/live/testplan/topic/kernel/generic/test -Dtests_host=hackbench
+###   $ tapper-testrun newtestplan --file /data/tapper/live/testplan/topic/kernel/generic/test -Dmachines=lemure
+###   $ tapper-testrun newtestplan --file /data/tapper/live/testplan/topic/kernel/generic/test -Dmachines=lemure -Dtests_host=hackbench
+###
+###   $ tapper-testrun newtestplan --file /data/tapper/live/testplan/topic/kernel/generic/test -Dkernelpkg=/data/tapper/live/repository/packages/kernel/sles11/i686/linux-3.3_rc3-94-g612b850.2012-02-10.i686.tgz
+# Builder details:
+#  builder:    [% builder %]
+#  repository: [% repository %]
+#  type:       [% type %]
+
+[%- FOREACH distro = AllDistros %]
+[%- PROCESS 'include/distrodetails' -%]
+# distro:           [% distro %]
+#  install_file:    [% install_file %]
+#  install_repo:    [% install_repo %]
+#  install_opts:    [% install_opts %]
+#  kernel:          [% kernel %]
+#  initrd:          [% initrd %]
+[%- END %]
+
+[%- FOREACH machine = AllMachines %]
+[%- FOREACH hostbootparam_entry = AllHostBootparams %]
+[%- FOREACH distro = AllDistros %]
+# machine:     [% machine %]
+# distro:      [% distro %]
+---
+type: multitest
+description:
+   shortname: "[% fullname %]"
+   topic: "[% fullname %][% IF hostbootparam_entry %] [% hostbootparam_entry %][% END %]"
+   queue: [% queue %]
+   requested_hosts_all:
+   - [% machine %]
+   preconditions:
+          -
+[%- IF distro == 'baseimage' %]
+            precondition_type: image
+            image: [% current_SLES11 %]
+            partition:
+            - testing
+            - sda2
+            - hda2
+            mount: /
+            arch: linux64
+[% ELSE %]
+            grub_text: "timeout 2\n\ntitle [% distro %] Testing\nkernel [% kernel %] [% install_file %] [% install_repo %] [% install_opts %] nomodeset $HOSTOPTIONS $TAPPER_OPTIONS\ninitrd [% initrd %]\n"
+            name: autoinstall-[% distro %]
+            precondition_type: autoinstall
+            timeout: 7200
+[% END %][%# baseimage %]
+[%# Currently we allow distro + additional kernelpkg ===> not sure whether that really works! %]
+[%- IF kernelpkg %]
+          -
+            precondition_type: package
+            filename: [% kernelpkg %]
+[% ELSIF builder %]
+          -
+            precondition_type: produce
+            producer: Builder
+            type: [% type %]
+            repository: [% repository %]
+            buildserver: [% buildserver %]
+[%-    IF builder_changeset %]
+            version: [% builder_changeset %]
+[%     END -%]
+[% END -%][%# builder %]
+[%- IF kernelpkg || builder %]
+          -
+            precondition_type: package
+            filename: kernel/linux-firmware/firmware.tgz
+          -
+            precondition_type: copyfile
+            name: /data/tapper/live/repository/packages/tapperutils/kernel/gen_initrd.sh
+            dest: /bin/
+            protocol: local
+          -
+            precondition_type: exec
+            filename: /bin/gen_initrd.sh
+          -
+            precondition_type: copyfile
+            protocol: local
+            name: /data/tapper/live/repository/testprograms/utilities/*
+            dest: /
+[% END %][%# baseimage %]
+[%- FOREACH package0 = AllPackagesHost %]
+          -
+            precondition_type: package
+            name: [% package0 %]
+[% END -%][%# FOREACH AllPackagesHost %]
+[%- FOREACH test0 = AllTestsHost %]
+[%- IF test0.match('^/') %][% dirname0  = test0.replace('/[^/]+$', '') %][% basename0 = test0.replace('.*/([^/]+)$', '$1') %]
+
+#         HOST TEST PREPARE: [% test0 %]
+#                            (direct test script)
+          -
+            precondition_type: copyfile
+            protocol: local
+            name: [% dirname0 %]/*
+            dest: /
+[% END -%][%# IF test0.match %]
+[% END -%][%# FOREACH AllTestsHost preconditions %]
+          -
+            precondition_type: testprogram
+            program: /data/tapper/autoreport/metainfo.t
+            chdir: AUTO
+[%- FOREACH test0 = AllTestsHost %]
+
+#         HOST TEST: [% test0 %]
+[%- IF test0.match('^/') %][% dirname0  = test0.replace('/[^/]+$', '') %][% basename0 = test0.replace('.*/([^/]+)$', '$1') %]
+#                    (direct test script)
+          -
+            precondition_type: testprogram
+            program: /[% basename0 %]
+            timeout: [% test_timeout %]
+            chdir: AUTO
+[%- IF tests_host_capture %]
+            capture: [% tests_host_capture %]
+[%  END %]
+[%- IF tests_host_params %]
+            parameters:
+[%-   FOREACH param0 = AllTestsParamsHost %]
+            - [% param0 %]
+[%    END %]
+[%  END %]
+[% ELSE %]
+#                    (autotest)
+          -
+            precondition_type: testprogram
+            program: /opt/tapper/bin/tapper-testsuite-autotest
+            timeout: [% test_timeout %]
+            parameters:
+            - --source_url
+            - file:///data/tapper/live/repository/packages/autotest/renormalist-autotest-039effb.tar.gz
+            - --test
+            - [% test0 %]
+[% END -%][%# IF test0.match %]
+[% END -%][%# FOREACH AllTestsHost testprograms %]
+          -
+            precondition_type: grub
+            config: |
+             timeout 3
+             default 0
+             title KERNEL [% kernel_version %]
+               root $grubroot
+               kernel /boot/vmlinuz root=$root $HOSTOPTIONS debug ignore_loglevel
+               initrd /boot/initrd
+[%- END %][%# FOREACH AllDistros %]
+[%- END %][%# FOREACH AllHostBootparams %]
+[%- END %][%# FOREACH AllMachines %]

@@ -1,0 +1,21 @@
+builder = "hvm"
+vif = [ "mac=52:54:00:01:__HOSTNRHEX__:__GUESTNRHEX__,bridge=xenbr0" ]
+vnc = 1
+vnclisten = "0.0.0.0"
+vncpasswd = ""
+serial = "file:/tmp/guest__GUESTNR__.fifo"
+monitor = 1
+usb = 1
+usbdevice = "tablet"
+name = "guest-__GUESTNR__-__GUESTNAME__"
+disk = [ "__DISKTEMPLATE1__",
+         "__DISKTEMPLATE2__" ]
+boot = "c"
+acpi = 1
+apic = 1
+pae = 1
+hpet = 0
+shadow_memory = 10
+memory = __GUESTMEMORY__
+vcpus = __GUESTVCPUS__
+hap = 1

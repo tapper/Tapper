@@ -1,0 +1,8 @@
+[%#- -*- mode: tt -*- %]
+[% FILTER collapse %]
+[% IF ourbenchmark.match('^aim|autotest|ctcs|diy|hackbench|hostcputest|hts|kernbench|llc|lmbench|ltp|perf|phoronix|rhv7|slbench|speccpu2006|specjbb2005|stressapptest|sysbench|tiobench|usercompbench$') %]
+  [% benchmarkscript = BLOCK %]/opt/tapper/bin/tapper_testsuite_[% ourbenchmark %].sh[% END %]
+[% ELSE %]
+ [% THROW UNKNOWNBENCHMARK "Unknown benchmark name.\n" %]
+[% END %]
+[% END %][%# FILTER collapse %]

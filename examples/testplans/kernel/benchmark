@@ -1,0 +1,46 @@
+[%#- -*- mode: tt -*- %]
+
+[%- IF title == '' %]
+    [%- title = "Kernel Performance Regression" -%]
+[% END -%]
+
+[%- IF machines == '' %]
+    [%-  machines = ['foo', 'bar', 'baz' ] -%]
+[% END -%]
+
+[%- IF benchmarks == '' %]
+    [%- benchmarks = ['kernbench', 'hackbench', 'sysbench', 'lmbench', 'usercompbench', 'specjbb2005', 'specjvm2008'] -%]
+[% END -%]
+
+[%- IF kernelpkg == '' %]
+    [% THROW kernelpkg "Missing kernelpkg. You have to provide it." %]
+[% END -%]
+
+[%- IF gitrev == '' %]
+    [% THROW gitrev "Missing 'gitrev'. You have to provide it." %]
+[% END -%]
+
+[% gitconfig = 'kernel_rev-' _ gitrev _ '.log' %]
+[% perf = 'perf-' _ gitrev %]
+
+[%- IF queue == '' %]
+    [%- queue = "Kernel-benchmarks" -%]
+[% END -%]
+
+[%- IF topic == '' %]
+    [%- topic = "Test-Kernel-Performance-Regression" -%]
+[% END -%]
+
+[%- IF kernelpkg_path == '' %]
+    [%- kernelpkg_path = "/data/tapper/live/repository/packages/kernel/slbench/" -%]
+[% END -%]
+
+[%- IF benchmark_path == '' %]
+    [%- benchmark_path = "/opt/tapper/python/bin/" -%]
+[% END -%]
+
+[% FOREACH benchmark IN benchmarks %]
+    [%- PROCESS 'topic/kernel/generic/benchmark' -%]
+[% END %]
+
+

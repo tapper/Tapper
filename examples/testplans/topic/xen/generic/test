@@ -1,0 +1,454 @@
+[%#- -*- mode: tt -*- %]
+[%- PROCESS 'include/defaults' -%]
+[% USE Autoformat %]
+[%- IF machine     != '' %][% THROW LEGACY "Use '-Dmachines=...' (plural) now.\n" %][% END -%]
+[%- IF tests_dom0  != '' %][% THROW LEGACY "Use '-Dtest_host=...' now.\n" %][% END -%]
+[%- IF tests_domu  != '' %][% THROW LEGACY "Use '-Dtests_guest=...' now.\n" %][% END -%]
+[%- IF Timeout     != '' %][% THROW LEGACY "Use '-Dtest_timout=...' now.\n" %][% END -%]
+[%- IF tests       != '' %][% THROW AMBIGUITY "Use '-Dtests_host=...' or '-Dtests_guest=...'.\n" %][% END -%]
+[%- IF host        != '' %][% THROW AMBIGUITY "Use '-Dmachines=...'.\n" %][% END -%]
+[%- IF hosts       != '' %][% THROW AMBIGUITY "Use '-Dmachines=...'.\n" %][% END -%]
+[%- IF queues      != '' %][% THROW AMBIGUITY "Use '-Dqueue=name' (singular).\n" %][% END -%]
+[%- IF queue.match(',')  %][% THROW AMBIGUITY "Use '-Dqueue=name' (only one queue).\n" %][% END -%]
+[%- IF queue       == '' %][% queue          = 'AdHoc' %][% END -%]
+[%- IF machines    == '' %][% machines       = 'limete' %][% END -%]
+[%- IF distros     == '' %][% distros        = 'baseimage' %][% END -%]
+[%- IF buildserver == '' %][% buildserver    = 'acid' %][% END -%][%# acid=64bit, selen=32bit %]
+[%- IF guestimages == '' %][% guestimages    = 'redhat_rhel6u2_64b_raw.img,suse_sles11_sp2_64b_raw.img,redhat_rhel6u2_32b_raw.img' %][% END -%]
+[%- IF guestmemory == '' %][% guestmemory    = '1024' %][% END -%]
+[%- IF guestvcpus  == '' %][% guestvcpus     = '2' %][% END -%]
+[%- IF gueststarthookdir == '' %][% gueststarthookdir = '' %][% END -%]
+[%- IF packages_host == '' %][% packages_host = '' %][% END -%]
+[%- IF packages_guest == '' %][% packages_guest = '' %][% END -%]
+[%- IF use_compressed_images == '' %][% use_compressed_images = '0' %][% END -%]
+[%- IF tests_host  == '' %][% tests_host     = '' %][% END -%][%# 'hackbench,unixbench,dbench,tiobench,iozone,reaim,aiostress,compilebench' %]
+[%- IF tests_guest == '' %][% tests_guest    = '' %][% END -%][%# 'hackbench,unixbench,dbench,tiobench,iozone,reaim,aiostress,compilebench' %]
+[%- IF test_timeout == '' %][% IF tests_guest.match('winsst') %][% test_timeout  = '36000' %][% ELSE %][% test_timeout  = '10800' %][% END -%][% END -%]
+[%- shorttitle_test_host = BLOCK %][% IF tests_host.match(',') %]MULTI[% ELSE %][% tests_host.replace('.*/([^/]+)$', '$1').replace('^(xen|kvm)-','').replace('\.sh$','').replace('\.t$','').replace('[-_]','') %][% END %][% END -%]
+[%- shorttitle_test_guest = BLOCK %][% IF tests_guest.match(',') %]MULTI[% ELSE %][% tests_guest.replace('.*/([^/]+)$', '$1').replace('^(xen|kvm)-','').replace('\.sh$','').replace('\.t$','').replace('[-_]','') %][% END %][% END -%]
+[%- shorttitle_benchmark_guest = BLOCK %][% IF ourbenchmarks_guest %][% IF ourbenchmarks_guest.match(',') %]MULTI[% ELSE %][% ourbenchmarks_guest.replace('.*/([^/]+)$', '$1').replace('^(xen|kvm)-','').replace('\.sh$','').replace('\.t$','').replace('[-_]','') %][% END %][% END -%][% END -%]
+[%- IF title       == ''    %][% title          = BLOCK %]Xen[%- IF shorttitle_test_host != '' %]-[% shorttitle_test_host %][% ELSE %][% END %][%- IF shorttitle_test_guest != '' %]-[% shorttitle_test_guest %][% END %][% END %][% END -%]
+[%- IF titlesuffix == ''    %][% titlesuffix = BLOCK %][%- IF shorttitle_benchmark_guest != '' %][% shorttitle_benchmark_guest %][% END %][% END %][% END -%]
+[%- IF builder     == '' && distros == 'baseimage' && xenpkg == '' %][% builder = '4upv' %][% END -%]
+[%- IF distros == 'baseimage' %][% disktemplate1 = '/virt/guest-__GUESTNR__.img,raw,hda,w' %][% disktemplate2 = '/virt/guest-__GUESTNR__-auxiliary.img,raw,hdb,w' %][% ELSE %][% disktemplate1 = 'file:/virt/guest-__GUESTNR__.img,hda,w' %][% disktemplate2 = 'file:/virt/guest-__GUESTNR__-auxiliary.img,hdb,w' %][% END -%][%# "file:" is the deprecated thing, but still needed in distros -%]
+[% repository = builder %]
+[% type = 'xen' %]
+[%- AllMachines       = machines.split(',')       || [] -%]
+[%- AllDistros        = distros.split(',')        || [] -%]
+[%- AllPackagesHost   = packages_host.split(',')  || [] -%]
+[%- AllPackagesGuest  = packages_guest.split(',') || [] -%]
+[%- AllTestsHost      = tests_host.split(',')     || [] -%]
+[%- AllTestsGuest     = tests_guest.split(',')    || [] -%]
+[%- GuestImageNames   = guestimages.split(',')    || [] -%]
+[%- AllHostBootparams = hostbootparams.split(';') || [] -%][%# SIC, semicolon! We need ',' inside bootparams. -%]
+[%- AllOURBenchmarksGuest       = ourbenchmarks_guest.split(',')      || [] -%]
+[%- AllOURBenchmarksGuestParams = ourbenchmarksparams_guest.split(',') || [] -%]
+[%- GuestImageNames.unshift('NO_IMAGE_AT_INDEX_0') %][%# interesting index starts at 1, for readability -%]
+[% fullname = BLOCK %][% title %][% IF titlesuffix %]-[% titlesuffix %][% END %][% END %]
+[% baseimage = current_SLES11 %]
+[%- IF AllHostBootparams.size == 0 %][%- AllHostBootparams.unshift('') %][% END -%][%# to not empty the loop over it -%]
+###
+### Run a Xen environment with tests.
+### [topic.xen.generic.test]
+###
+###
+### Name   : [% fullname %]
+### Host   : [% current_SLES11 %]
+### Guests : [% guestimages %]
+###
+### Optional params:
+###
+###   -Dxenpkg=<filename>        Filename of already existing Xen package;                default: build one
+###   -Dbuilder=<buildkey>       Key what type of Xen to build;                           default: 4upv
+###   -Dbuilder_changeset=<xyz>  Changeset of Xen to build;                               default: <empt>
+###
+###   -Dhostbootparams=<param>   Kernel boot parameter to host, SEMICOLON[sic] separated; default: <empty>
+###   -Dtest_timeout=<seconds>   Timeout for tests;                                       default: 10800 (3h)
+###
+###   -Dtests_host=<testname>    Workload names, comma separated, see list below;         default: <empt>
+###   -Dtests_host_capture=tap   Capture and send TAP output of host tests;               default: <empty>
+###
+###   -Dtests_guest=<testname>   Workload names, comma separated, see list below;         default: <empt>
+###   -Dtests_guest_capture=tap  Capture and send TAP output of guest tests;              default: <empty>
+###
+###   -Ddistros=<distros>        Host distro names, comma separated; see list below;      default: sles_11.2_64
+###   -Dguestimages=<images>     Images for guests, comma separated; see list below;      default: sles_11.2_64
+###   -Dguestmemory=<mb>         Memory in Megabyte assigned to each guest;               default: 1024
+###   -Dguestvcpus=<n>           Number of virtual CPUs assigned to each guest;           default: 2
+
+###   -Dmachines=<machine>       Machine names, comma separated;                          default: limete
+###   -Dqueue=<queue>            Queue to use;                                            default: AdHoc
+###   -Dtitlesuffix=<string>     Suffix to be used in testplan and testrun names;         default: <empty>
+###
+### Available values:
+###
+###   builder:
+[%- FILTER autoformat(all => 1) %]
+###      [% FOREACH m = builder_list -%][% m %], [% END %]
+[% END %]
+###      Mnemonics:
+###       - numbers  mean the xen release 4.0, 4.1, etc.
+###       - "pv"     means "pvops"
+###       - "u"      means "unstable"
+###       - "s"      means "staging"
+###       - "osvw"   means "the osvw branch"                (implicit "pv")
+###       - "vmcb"   means "with vmcb cleanbit debug patch" (implicit "pv")
+###       - "decode" means "with decode assist debug patch" (implicit "pv")
+###   machines:
+[%- FILTER autoformat(all => 1) %]
+###      [% FOREACH m = machine_list -%][% m %], [% END %]
+[% END %]
+##   distros:
+[%- FILTER autoformat(all => 1) %]
+##      [% FOREACH d = distro_list -%][% d %], [% END %]
+[% END %]
+##   guestimages:
+[%- FILTER autoformat(all => 1) %]
+##      [% FOREACH d = image_list -%][% d %], [% END %]
+[% END %]
+###   tests (tests_host, tests_guest):
+###      - non-path words are interpreted as Autotest subtests:
+###
+[%- FILTER autoformat(all => 1) %]
+###          [% FOREACH t = useful_autotest_tests -%][% t %], [% END %]
+[%- END -%]
+###
+###      - absolute path names, like "/data/tapper/autoreport/mytest.t"
+###        are interpreted as script to execute (and every file inside
+###        that path/* will also be copied)
+###        
+###        
+###
+### Typical command lines (User tapper@tapper):
+###
+###   $ tapper-testrun newtestplan --file /data/tapper/live/testplan/topic/xen/generic/test
+###   $ tapper-testrun newtestplan --file /data/tapper/live/testplan/topic/xen/generic/test -Dtests_guest=hackbench
+###   $ tapper-testrun newtestplan --file /data/tapper/live/testplan/topic/xen/generic/test -Dmachines=lemure
+###   $ tapper-testrun newtestplan --file /data/tapper/live/testplan/topic/xen/generic/test -Dmachines=lemure -Dtests_host=hackbench
+###
+###   $ tapper-testrun newtestplan --file /data/tapper/live/testplan/topic/xen/generic/test -Dxenpkg=/data/tapper/live/repository/packages/xen/sles11/x86_64/xen-4.0-testing-pvops/xen-4.0-testing-pvops.2012-01-18.21560_271e30252c16.x86_64.tgz
+[% IF xenpkg.match('pvops') or builder.match('pv') or builder.match('osvw') or builder.match('vmcb') or builder.match('decode') %]
+   [% pvops = '1' %]
+   [% pvopskernelsuffix = '-pvops' %]
+[% ELSE %]
+   [% pvops = '0' %]
+   [% pvopskernelsuffix = '' %]
+[% END %]
+[% IF xenpkg.match('iommuv2') or tests_guest.match('iommuv2') or guestimages.match('iommuv2') %]
+   [% iommuv2 = '1' %]
+[% ELSE %]
+   [% iommuv2 = '0' %]
+[% END %]
+
+# Builder details:
+#  buildserver: [% buildserver %]
+#  builder:     [% builder %]
+#  repository:  [% repository %]
+#  type:        [% type %]
+#  pvops:       [% pvops %]
+[%- FOREACH test0 = AllTestsHost %]
+# test0:       [% test0 %]
+[%- END %]
+
+[%- FOREACH testu = AllTestsGuest %]
+# testu:       [% testu %]
+[%- END %]
+
+[%- FOREACH benchmarku = AllOURBenchmarksGuest %]
+# benchmarku:       [% benchmarku %]
+[%- FOREACH benchmarkparamu = AllOURBenchmarksGuestParams %]
+#                   [% benchmarkparamu %]
+[%- END %]
+[%- END %]
+
+[%- FOREACH distro = AllDistros %]
+[%- PROCESS 'include/distrodetails' -%]
+# distro:           [% distro %]
+#  install_file:    [% install_file %]
+#  install_repo:    [% install_repo %]
+#  install_opts:    [% install_opts %]
+#  kernel:          [% kernel %]
+#  initrd:          [% initrd %]
+[%- END %]
+
+[%- FOREACH machine = AllMachines %]
+[%- FOREACH hostbootparam_entry = AllHostBootparams %]
+[%- FOREACH distro = AllDistros %]
+[% distroname = distro %]
+[% IF distroname == 'baseimage' %][% distroname = baseimage.replace('.*/([^/]+)$', '$1').replace('.tar.gz','') %][% END %]
+[% machine_id = BLOCK %][% testrundb_hostnames.$machine.id | format("%02d") %][% END %]
+[% machine_id_hex = BLOCK %][% testrundb_hostnames.$machine.id | format("%02x") %][% END %]
+# machine:     [% machine %] (ID: [% machine_id %]/0x[% machine_id_hex %])
+# distro:      [% distro %]
+# distroname:  [% distroname %]
+---
+type: multitest
+description:
+   shortname: "[% fullname %]"
+   topic: "[% fullname %][% IF hostbootparam_entry %] [% hostbootparam_entry %][% END %]"
+   queue: [% queue %]
+   requested_hosts_all:
+   - [% machine %]
+   preconditions:
+   -
+      precondition_type: virt
+      name: "Xen-hosttest:[% shorttitle_test_host %];guesttest:[% shorttitle_test_guest %][% IF shorttitle_benchmark_guest %];guestbenchmark:[% shorttitle_benchmark_guest %][% END %]"
+      host:
+        root:
+[%- IF distro == 'baseimage' %]
+          precondition_type: image
+          image: [% baseimage %]
+          partition: /dev/sda2
+          mount: /
+          arch: linux64
+[% ELSE %]
+          grub_text: "timeout 2\n\ntitle [% distro %] Testing\nkernel [% kernel %] [% install_file %] [% install_repo %] [% install_opts %] nomodeset $HOSTOPTIONS $TAPPER_OPTIONS\ninitrd [% initrd %]\n"
+          name: autoinstall-[% distro %]
+          precondition_type: autoinstall
+          timeout: 7200
+[% END %]
+        preconditions:
+[%- IF xenpkg %]
+          -
+            precondition_type: package
+            filename: [% xenpkg %]
+[% ELSIF builder %]
+          -
+            precondition_type: produce
+            producer: Builder
+            type: [% type %]
+            repository: [% repository %]
+            buildserver: [% buildserver %]
+[%- IF builder_changeset %]
+            version: [% builder_changeset %]
+[% END -%]
+[% END -%][%# xenpkg %]
+[%- IF xenpkg || builder %]
+          -
+            precondition_type: package
+            filename: tapperutils/sles10/xen_installer_suse.tar.gz
+          -
+            precondition_type: exec
+            filename: /bin/xen_install.sh
+[%- IF iommuv2 %]
+            options:
+              - xen-iommuv2-pvops
+[%- ELSIF pvops %]
+            options:
+              - pvops
+[% ELSE %]
+            options: ~
+[% END -%][%# iommuv2/pvops %]
+[% END -%][%# xenpkg %]
+          -
+            precondition_type: copyfile
+            protocol: local
+            name: /data/tapper/live/repository/testprograms/utilities/*
+            dest: /
+[%- FOREACH guest IN [ 1 .. GuestImageNames.max ] %]
+[% guest = BLOCK %][% guest | format('%02d') %][% END %]
+[% guestnrhex = BLOCK %][% guest | format('%02x') %][% END %]
+[% guest_image_basename = GuestImageNames.$guest.replace('^(.*)\.[^.]+$', '$1') %]
+#         guest [% guest %] config preparation
+
+[%- IF use_compressed_images %]
+          -
+            precondition_type: exec
+            filename: /bin/mv
+            options:
+            - /virt/[% guest_image_basename %].img
+            - /virt/[% guest %].img
+[% END %]
+          -
+            precondition_type: copyfile
+            name: /data/tapper/autoreport/tapper-autoreport
+            dest: /virt/
+            protocol: local
+          -
+            precondition_type: copyfile
+            name: /data/tapper/autoreport/autoreport-utils
+            dest: /virt/
+            protocol: local
+          -
+            precondition_type: copyfile
+            name: /data/tapper/live/testplan/topic/xen/generic/upload-xen-dmesg.sh
+            dest: /virt/
+            protocol: local
+          -
+            precondition_type: copyfile
+            name: /data/tapper/live/testplan/topic/xen/generic/guest-start-template.sh
+            dest: /virt/guest-start-[% guest %].sh
+            protocol: local
+          -
+            precondition_type: copyfile
+            name: /data/tapper/live/testplan/topic/xen/generic/guest-template.svm
+            dest: /virt/guest-[% guest %].svm
+            protocol: local
+          -
+            precondition_type: exec
+            filename: /usr/bin/perl
+            options:
+            - -pni
+            - -e
+[%-#          Order matters! Substitute __DISKTEMPLATEx__ first! %]
+            - "'s{__DISKTEMPLATE1__}{[% disktemplate1 %]}g; s{__DISKTEMPLATE2__}{[% disktemplate2 %]}g; s/__IOMMUV2__/[% iommuv2 %]/g; s/__HOSTNRHEX__/[% machine_id_hex %]/g; s/__DISTRO__/[% distroname %]/g; s/__PVOPS__/[% pvops %]/g; s/__BUILDER__/[% builder %]/g; s/__BUILDERCHANGESET__/[% builder_changeset %]/g; s{__XENPKG__}{[% xenpkg %]}g; s/__GUESTNRHEX__/[% guestnrhex %]/g; s/__GUESTNR__/[% guest %]/g; s/__GUESTNAME__/[% GuestImageNames.$guest %]/g; s/__GUESTMEMORY__/[% guestmemory %]/g; s/__GUESTVCPUS__/[% guestvcpus %]/g; s{__GUESTSTARTHOOKDIR__}{[% gueststarthookdir %]}g'"
+            - /virt/guest-start-[% guest %].sh
+            - /virt/guest-[% guest %].svm
+[%- END -%][%# FOREACH guest %]
+[%- FOREACH package0 = AllPackagesHost %]
+          -
+            precondition_type: package
+            name: [% package0 %]
+[% END -%][%# FOREACH AllPackagesHost %]
+[%- FOREACH test0 = AllTestsHost %]
+[%- IF ( test0.match('^/') && ! test0.match('^/opt/tapper') ) %][% dirname0  = test0.replace('/[^/]+$', '') %][% basename0 = test0.replace('.*/([^/]+)$', '$1') %]
+#         HOST TEST PREPARE: [% test0 %]
+#                            (direct test script)
+          -
+            precondition_type: copyfile
+            protocol: local
+            name: [% dirname0 %]/*
+            dest: /
+[% END -%][%# IF test0.match %]
+[% END -%][%# FOREACH AllTestsHost preconditions %]
+        testprogram_list:
+          -
+            program: /data/tapper/autoreport/metainfo.t
+            chdir: AUTO
+[%- FOREACH test0 = AllTestsHost %]
+#         HOST TEST: [% test0 %]
+[%- IF test0.match('^/') %][% dirname0  = test0.replace('/[^/]+$', '') %][% basename0 = test0.replace('.*/([^/]+)$', '$1') %]
+#                    (direct test script)
+          -
+            program: /[% basename0 %]
+[%- IF tests_host_capture %]
+            capture: [% tests_host_capture %]
+[% END %]
+[% ELSE %]
+#                    (autotest)
+          -
+            program: /opt/tapper/bin/tapper-testsuite-autotest
+            environment:
+              http_proxy: http://gwo:3128
+              https_proxy: http://gwo:3128
+            parameters:
+              - --source_url
+              - file:///data/tapper/live/repository/packages/autotest/renormalist-autotest-039effb.tar.gz
+              - --test
+              - [% test0 %]
+[% END -%][%# IF test0.match %]
+            timeout: [% test_timeout %]
+[% END -%][%# FOREACH AllTestsHost testprograms %]
+[%- IF GuestImageNames.max > 0 %]
+      guests:
+[%- FOREACH guest IN [ 1 .. GuestImageNames.max ] %]
+[% guest = BLOCK %][% guest | format('%02d') %][% END %]
+[% guest_image_basename = GuestImageNames.$guest.replace('^(.*)\.[^.]+$', '$1') %]
+[% guest_image_compressed = BLOCK %][% guest_image_basename %].tgz[% END %]
+#       GUEST [% guest %] preconditions
+        -
+          root:
+[%- IF use_compressed_images %]
+            precondition_type: package
+            url: nfs://osko:/export/image_files/official_testing/tared_testimages/[% guest_image_compressed %]
+            target_directory: /virt
+[%- ELSE %]
+            precondition_type: copyfile
+            name: "osko:/export/image_files/official_testing/[% GuestImageNames.$guest %]"
+            dest: /virt/guest-[% guest %].img
+            protocol: nfs
+[%- END %]
+[%- IF GuestImageNames.$guest.match('_32b') %]
+            arch: linux32
+[%- ELSIF GuestImageNames.$guest.match('windows') %]
+            arch: windows
+[%- ELSE %]
+            arch: linux64
+[%- END %]
+            mountfile: /virt/guest-[% guest %]-auxiliary.img
+            mounttype: raw
+          config:
+            exec: /virt/guest-start-[% guest %].sh
+[%- IF AllTestsGuest.size %][%#  || AllOURBenchmarksGuest.size %]
+          preconditions:
+[%- END %]
+[%- FOREACH packageU = AllPackagesGuest %]
+          -
+            precondition_type: package
+            name: [% packageU %]
+[% END -%][%# FOREACH AllPackagesGuest %]
+[%- FOREACH testU = AllTestsGuest %]
+[%- IF ( testU.match('^/') && ! testU.match('^/opt/tapper') ) %][% dirnameU  = testU.replace('/[^/]+$', '') %][% basenameU = testU.replace('.*/([^/]+)$', '$1') %]
+#         GUEST TEST PREPARE: [% testU %]
+#                             (direct test script)
+          -
+            precondition_type: copyfile
+            protocol: local
+            name: [% dirnameU %]/*
+            dest: /
+[%- END %][%# IF testU.match %]
+[%- END %][%# FOREACH AllTestsGuest preconditions %]
+          testprogram_list:
+          -
+            program: /data/tapper/autoreport/metainfo.t
+            chdir: AUTO
+[%- FOREACH testU = AllTestsGuest %]
+#         GUEST TEST: [% testU %]
+[%- IF ( testU.match('^/') && ! testU.match('^/opt/tapper') ) %][% dirnameU  = testU.replace('/[^/]+$', '') %][% basenameU = testU.replace('.*/([^/]+)$', '$1') %]
+#                     (direct test script)
+          -
+            program: /mnt/tapper/[% basenameU %]
+            chdir: AUTO
+[%-   IF tests_guest_capture %]
+            capture: [% tests_guest_capture %]
+[%    END %]
+[% ELSIF testU.match('^/opt/tapper') %]
+#                     (clientpkg test script)
+          -
+            program: [% testU %]
+[% ELSIF testU.match('winsst') %]
+#                     (winsst)
+          -
+            program: winsst
+            runtime: 16000
+[% ELSE %]
+#                     (autotest)
+          -
+            program: /opt/tapper/bin/tapper-testsuite-autotest
+            environment:
+              http_proxy: http://gwo:3128
+              https_proxy: http://gwo:3128
+            parameters:
+              - --source_url
+              - [% autotest_snapshot_url %]
+              - --test
+              - [% testU %]
+[%- END %][%# IF testU.match %]
+            timeout: [% test_timeout %]
+[%- END %][%# FOREACH AllTestsGuest testprogram s%]
+[%- FOREACH benchmarkU = AllOURBenchmarksGuest %]
+[%- ourbenchmark = benchmarkU -%][%# 'include/defaultbenchmarks' uses ourbenchmark %]
+[%- PROCESS 'include/defaultbenchmarks' -%]
+#         GUEST BENCHMARK: [% ourbenchmark %]
+          -
+            program: [% benchmarkscript %]
+            timeout: [% test_timeout %]
+[%- IF AllOURBenchmarksGuestParams.size %]
+            parameters:
+[%- END %]
+[%- FOREACH benchmarkparamU = AllOURBenchmarksGuestParams %]
+              - [% benchmarkparamU %]
+[%- END %][%# FOREACH AllOURBenchmarksGuestParams %]
+[%- END %][%# FOREACH AllOURBenchmarksGuest benchmarkU %]
+[%- END %][%# FOREACH guest %]
+[%- END %][%# IF GuestImageNames.max > 0 %]
+[%- IF distro == 'baseimage' %]
+   -
+      precondition_type: grub
+      shortname: grub
+      config: "timeout 3\ndefault 0\ntitle XEN\n root $grubroot\n kernel /boot/xen.gz $XENHOSTOPTIONS console=com1 com1=115200 [% hostbootparam_entry %] loglvl=all guest_loglvl=all noreboot\n module /boot/vmlinuz[% pvopskernelsuffix %] $TAPPER_OPTIONS root=$root console=hvc0 nomodeset\n module /boot/initrd[% pvopskernelsuffix %]\n"
+# reboot=force
+[%- END %]
+[%- END %][%# FOREACH AllDistros %]
+[%- END %][%# FOREACH AllHostBootparams %]
+[%- END %][%# FOREACH AllMachines %]

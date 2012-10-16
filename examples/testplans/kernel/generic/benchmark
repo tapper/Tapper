@@ -1,0 +1,68 @@
+### 
+###
+###
+### Name        : Linux Kernel Performance Regression Benchmarking
+### Host system : Ubuntu 10.04
+### Kernel      : Linus tree
+### Test program: to be filled in
+###
+###
+###
+---
+type: multitest
+description:
+   shortname: "[% title %] - [% kernelpkg %]"
+   topic: [% benchmark %]
+   queue: [% queue %]
+   requested_hosts_all:
+   [% FOREACH machine IN machines %] - [% machine %]
+   [% END %]
+   preconditions:
+          -
+            precondition_type: image
+            arch: linux64
+            image: ubuntu/lkbench-64.tar.gz
+            mount: /
+            partition:
+            - testing
+            - sda2
+            - hda2
+          -
+            precondition_type: copyfile
+            dest: /usr/local/bin/
+            name: /data/tapper/live/repository/packages/artemisutils-legacy/kernel/install_debian_kernel.sh
+            precondition_type: copyfile
+            protocol: local
+          -
+            precondition_type: copyfile
+            dest: /usr/src/
+            name: [% kernelpkg_path %][% kernelpkg %]
+            precondition_type: copyfile
+            protocol: local
+          -
+            precondition_type: copyfile
+            dest: /usr/local/bin/
+            name: [% kernelpkg_path %][% perf %]
+            protocol: local
+          -
+            precondition_type: copyfile
+            dest: /etc/
+            name: [% kernelpkg_path %][% gitconfig %]
+            protocol: local
+          -
+            precondition_type: exec
+            filename: /usr/local/bin/install_debian_kernel.sh
+          -
+            precondition_type: testprogram
+            program: /opt/tapper/bin/metainfo
+            timeout: 120
+          -
+            precondition_type: testprogram
+            program:  [% benchmark_path %]tapper_testsuite_[% benchmark %].sh
+            parameters:
+              - --speedcenter-upload
+            runtime: 86400
+            timeout: 90000
+          -
+            precondition_type: grub
+            config: "serial --unit=0 --speed=115200\nterminal serial\ntimeout 3\ndefault 0\ntitle lk-speed-regression\n root $grubroot\n kernel /boot/vmlinuz root=$root console=ttyS0,115200 reboot=force\n initrd /boot/initrd.img\n"

@@ -1,0 +1,64 @@
+[%#- -*- mode: tt -*- %]
+[%-  current_SLES11 = 'suse/sles11_sp1_x86-64_baseimage.tar.gz' %]
+[%- SLES_11_autoinstall_version = '11.1' %]
+[%- current_linux_3_0_package = 'kernel/sles11/x86_64/linux-3.1_rc3-96-gcaca951.2011-08-25.x86_64.tgz' %]
+[%- autotest_snapshot_url = 'file:///data/tapper/live/repository/packages/autotest/renormalist-autotest-039effb.tar.gz' %]
+[%- Xen_machines = ['limete','arges', 'gawaine'] %]
+[%- builder_list = [ '40', '40pv', '41', '41pv', '4u', '4us', '4ubd', '4upv', '4uspv', 'osvw', '41vmcb', '4uvmcb', '4udecode', '34', '33', '32', '31' ] %]
+[%- kernel_builder_list = [ 'linus', 'tip', 'stable', 'stable2-*', 'stable3-*', 'longterm-*' ] %]
+[%- machine_list = [ 'foo', 'bar', 'baz' ] %]
+[%- all_autotest_tests = ['qemu_iotests', 'iperf', 'linus_stress',
+                     'iosched_bugs', 'fsstress', 'sparse', 'sysbench',
+                     'dbench', 'fsfuzzer', 'ipv6connect', 'stress',
+                     'fio', 'libhugetlbfs', 'kvm', 'fsx', 'selftest',
+                     'bash_shared_mapping', 'dbt2', 'signaltest',
+                     'isic', 'barriertest', 'btreplay', 'systemtap',
+                     'tiobench', 'iozone', 'fsdev', 'cerberus',
+                     'reaim', 'profiler_test', 'pi_tests', 'rmaptest',
+                     'hwclock', 'bonnie', 'error_test_fail', 'dacapo',
+                     'cpu_hotplug', 'spew', 'perfmon', 'npb',
+                     'error_test_na', 'error_initialize',
+                     'error_skip_step', 'error_test_bug',
+                     'monotonic_time', 'error_cleanup', 'unixbench5',
+                     'cyclictest', 'netpipe', 'aiostress',
+                     'compilebench', 'real_time_tests', 'lmbench',
+                     'disktest', 'memory_api', 'synctest',
+                     'unixbench', 'pktgen', 'hackbench',
+                     'parallel_dd', 'posixtest', 'ltp', 'interbench',
+                     'error_test_error', 'ebizzy', 'download',
+                     'fs_mark', 'kvmtest', 'tbench', 'aborttest',
+                     'aio_dio_bugs', 'kernbench', 'uptime',
+                     'kernelbuild', 'dma_memtest', 'wb_kupdate',
+                     'tsc', 'scrashme', 'netperf2', 'profiler_sync',
+                     'flail', 'tracing_microbenchmark', 'lsb_dtk',
+                     'sleeptest', 'rtc', 'xmtest', 'rttester',
+                     'error_setup'] %]
+[%- useful_autotest_tests = [ 'hackbench', 'sleeptest', 'unixbench',
+                             'tbench', 'dbench', 'tiobench',
+                             'compilebench', 'lmbench', 'iozone',
+                             'kernbench', 'reaim', 'aiostress',
+                             'bonnie', 'compilebench', 'linus_stress',
+                             'fsstress', 'ltp', 'stress' ] %]
+[%- unused_autotest_tests = [ 'sysbench', 'dacapo', 'unixbench5' ] %][%# --- dysfunctional --- %]
+[%- distro_list = [rhel_6.2_64',
+                   'fedora_15_64',
+                   'sles_11.2_64',
+                   'opensuse_12.1_64',
+                   'ubuntu_11.10_64',
+                  ] %]
+[%- image_list = [
+                  'suse_sles11_sp2_64b_raw.img',
+                  'suse_sles11_sp2_32b_raw.img',
+                  'suse_sles11_sp2_32bpae_raw.img',
+                  'redhat_rhel6u2_64b_raw.img',
+                  'redhat_rhel6u2_32b_raw.img',
+                  'redhat_rhel5u8_64b_raw.img',
+                  'redhat_rhel5u8_32b_raw.img',
+                  'ms_winxp_pro_sp3_32b_sysprep_raw.img',
+                  'ms_winxp_pro_sp2_64b_sysprep_raw.img',
+                  'ms_windows_2003_sp2_64b_sysprep_raw.img',
+                  'ms_windows_2003_sp2_32b_sysprep_raw.img',
+                  'ms_windows_2008_32b_sysprep_raw.img',
+                  'ms_windows_2008_64b_sysprep_raw.img',
+                  ] %]
+              
