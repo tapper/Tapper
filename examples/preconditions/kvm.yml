@@ -1,0 +1,43 @@
+name: automatically generated Xen test
+precondition_type: virt
+host:
+  root:
+    image: fedora/fedora-9-x86_64-latest.tar.bz2
+    mount: /
+    arch: linux64
+    partition: sda2
+    precondition_type: image
+  preconditions:
+  - type: git
+    url: git://git.kernel.org/pub/scm/linux/kernel/git/avi/kvm.git
+    precondition_type: repository
+  - type: git
+    url: git://git.kernel.org/pub/scm/virt/kvm/kvm-userspace.git
+    precondition_type: repository
+  - precondition_type: copyfile
+    protocol: local
+    name: /data/tapper/development/repository/configs/kvm/.config
+    dest: /kvm/
+  - precondition_type: copyfile
+    protocol: local
+    name: /data/tapper/development/repository/packages/kvm/build_kvm.sh
+    dest: /bin/
+  - precondition_type: exec
+    filename: /bin/build_kvm.sh
+guests:
+- config:
+    dest: /bin/startkvm.sh
+    name: /data/tapper/live/repository/packages/tapperutils/startkvm.sh
+    precondition_type: copyfile
+    protocol: local
+    exec: /bin/startkvm.sh
+  root:
+    dest: /kvm/images
+    mountfile: /kvm/images/raw.img
+    mounttype: raw
+    name: fileserver:/export/image_files/official_testing/redhat_rhel5u2_64b_smp_up_qcow.img
+    precondition_type: copyfile
+    protocol: nfs
+    arch: linux64
+  testprogram:
+    execname: /opt/tapper/bin/tapper_testsuite_kernbench.sh

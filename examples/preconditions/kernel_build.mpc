@@ -1,0 +1,14 @@
+---
+arch: linux64
+image: suse/suse_sles10_sp2_64b_smp_raw.tar.gz
+mount: /
+partition: sda2
+precondition_type: image
+---
+precondition_type: kernelbuild
+git_url: git://gitserver/linux-2.6.git
+changeset: HEAD
+---
+precondition_type: testprogram
+program: /opt/tapper/bin/tapper_testsuite.sh
+timeout: 72000

@@ -1,0 +1,38 @@
+name: automatically generated Xen test
+precondition_type: virt
+host:
+  root:
+    arch: linux64
+    image: suse/suse_sles10_sp2_64b_smp_raw.tar.gz
+    mount: /
+    partition: 
+      - sda2
+      - testing
+    precondition_type: image
+  preconditions:
+  - filename: /data/tapper/live/repository/packages/xen/builds/x86_64/xen-3.3-testing/xen-3.3-testing.x86_64.tgz
+    precondition_type: package
+  - filename: tapperutils/sles10/xen_installer_suse.tar.gz
+    precondition_type: package
+  - filename: /bin/xen_installer_suse.pl
+    precondition_type: exec
+guests:
+- config:
+    dest: /
+    svm: /guest1_config_windows.svm
+    name: tapper:/data/tapper/tapper/live/repository/configs/xen/guest1_config_windows.svm
+    precondition_type: copyfile
+    protocol: nfs
+  root:
+    arch: windows
+    dest: /xen/images/
+    mountfile: /xen/images/guest1_windows.img
+    mountpartition: p1
+    mounttype: windows
+    name: fileserver:/export/image_files/official_testing/ms_win2003_sp2_32b_raw.img
+    precondition_type: copyfile
+    protocol: nfs
+  testprogram:
+    execname: winsst
+    timeout_testprogram: 100
+    runtime: 10

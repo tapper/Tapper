@@ -1,0 +1,32 @@
+---
+arch: linux64
+image: suse/suse_sles10_64b_smp_raw.tar.gz
+mount: /
+partition: sda2
+precondition_type: image
+---
+precondition_type: copyfile
+name: /data/tapper/live/repository/packages/tapperutils/kernel/gen_initrd.sh
+dest: /bin/
+protocol: local
+---
+precondition_type: package
+filename: kernel/x86_64/linux-2.6.31.x86_64.tgz
+---
+precondition_type: exec
+filename: /bin/gen_initrd.sh
+options:
+  - 2.6.31-rc6
+---
+precondition_type: copyfile
+name: /data/tapper/live/repository/testprograms/test_env/test_env
+dest: /bin/
+protocol: local
+---
+precondition_type: testprogram
+program: /bin/test_env
+timeout: 720
+runtime: 100
+parameters:
+- -l
+- -v

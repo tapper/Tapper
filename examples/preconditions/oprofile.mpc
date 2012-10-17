@@ -1,0 +1,52 @@
+# tapper-mandatory-fields:
+# tapper-optional-fields: id
+[% id = BLOCK %][% IF id %][% id %][%ELSE%]2009-06-29-perfmon-c4d4677_linux-v2.6.29-489-gd559a02_userland-5e7ac0e[% END %][% END %]
+---
+arch: linux64
+image: suse/suse_sles10_sp2_64b_smp_raw.tar.gz
+mount: /
+partition: sda2
+precondition_type: image
+---
+precondition_type: copyfile
+name: /data/tapper/live/repository/testprograms/uname_tap/uname_tap.sh
+dest: /bin/
+protocol: local
+---
+precondition_type: copyfile
+name: /data/tapper/live/repository/testprograms/oprofile/tapper-testsuite-oprofile
+dest: /bin/
+protocol: local
+---
+precondition_type: copyfile
+name: /data/tapper/live/repository/testprograms/oprofile/log2tap
+dest: /bin/
+protocol: local
+---
+precondition_type: copyfile
+name: /data/tapper/live/repository/packages/tapperutils/kernel/gen_initrd.sh
+dest: /bin/
+protocol: local
+---
+precondition_type: package
+filename: oprofile/perf-[% id %]-x86_64-standard.tar.gz
+---
+precondition_type: package
+filename: oprofile/oprofile-[% id %]-x86_64.tar.gz
+---
+precondition_type: package
+filename: oprofile/oprofile-[% id %]-testscripts.tar.gz
+---
+precondition_type: testprogram
+program: /bin/tapper-testsuite-oprofile
+timeout: 1200
+---
+precondition_type: testprogram
+program: /opt/tapper/bin/py_parselog
+timeout: 120
+---
+# precondition_type: installer_stop
+
+# use this with:
+# tapper-testrun new --macroprecond ~/tmp/oprofile.mpc -Did=2009-06-29-perfmon-c4d4677_linux-v2.6.29-489-gd559a02_userland-5e7ac0e --host johnconnor --owner root
+

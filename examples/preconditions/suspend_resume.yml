@@ -1,0 +1,32 @@
+--- 
+arch: linux32
+image: suse/sles11_sp1_i686_baseimage.tgz
+mount: /
+partition: 
+  - testing
+  - sda2
+  - hda2
+precondition_type: image
+--- 
+dest: /bin/
+name: /data/tapper/live/repository/packages/tapperutils/kernel/gen_initrd.sh
+precondition_type: copyfile
+protocol: local
+--- 
+filename: /data/tapper/live/repository/packages/testsuites/misc/resume_benchmark.tgz
+precondition_type: package
+--- 
+filename: kernel/sles11/i686/stable/linux-stable-3.3.6.2012-05-12.i686.tgz
+precondition_type: package
+--- 
+filename: /bin/gen_initrd.sh
+options: 
+  - 3.3.6-b67be2a5-stable
+precondition_type: exec
+--- 
+precondition_type: testprogram
+program: /bin/resume_benchmark.pl
+timeout: 300
+capture: tap
+environment:
+  BENCHMARK_HOSTNAME: tapper:2000

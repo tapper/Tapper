@@ -1,0 +1,25 @@
+# Example for autoinstall precondition
+# 
+# This example installs RHEL5 on the testmachine using kickstart. It
+# requires existing kickstartfiles accessible via HTTP. See section
+# webserver in chapter "Infrastructure" of the Tapper handbook on how to
+# prepare this web server.
+#
+# Note: The $TAPPER_OPTIONS part in the kernel command line is
+# required. Tapper substitutes this variable with everything the test
+# machine need to know to get its initial config.
+#
+#
+precondition_type: autoinstall
+name: opensuse-11.2-rc2-x86_64
+timeout: 10000
+grub_text: |
+   timeout 2
+
+   title RHEL 5
+   kernel /tftpboot/stable/rhel/5/x86_64/vmlinuz  console=ttyS0,115200 ks=http://tapper/autoinstall/stable/rhel/5/x86_64/tapper.ks ksdevice=eth0 noapic $TAPPER_OPTIONS
+   initrd /tftpboot/stable/rhel/5/x86_64/initrd.img
+---
+precondition_type: testprogram
+program: /opt/tapper/bin/py_parselog
+timeout: 600

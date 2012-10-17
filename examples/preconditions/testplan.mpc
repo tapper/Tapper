@@ -1,0 +1,64 @@
+---
+type: multitest
+description:
+  shortname: generic_test on Tip kernel/ 64bit
+  requested_hosts_all:
+  - johnconnor
+  preconditions:
+  - arch: linux64
+    image: suse/sles11_sp1_x86-64_baseimage.tar.gz
+    mount: /
+    partition: 
+      - testing
+      - sda2
+      - hda2
+    precondition_type: image
+  - dest: /bin/
+    name: /data/tapper/live/repository/packages/kernel/gen_initrd.sh
+    precondition_type: copyfile
+    protocol: local
+  - filename: kernel/sles11/osrc/linux-tip-2.6.38.x86_64.tgz
+    precondition_type: package
+  - filename: /bin/gen_initrd.sh
+    options: 
+      - 2.6.38
+    precondition_type: exec
+  - precondition_type: copyfile
+    name: /data/tapper/autoreport/generic_test.sh
+    dest: /
+    protocol: local
+  - precondition_type: testprogram
+    program: /generic_test.sh
+    timeout: 300 # 5 minutes
+---
+type: multitest
+description:
+  shortname: generic_test on Tip kernel/ 32bit
+  requested_hosts_all:
+  - johnconnor
+  preconditions:
+  - arch: linux64
+    image: suse/sles11_sp1_x86-64_baseimage.tar.gz
+    mount: /
+    partition: 
+      - testing
+      - sda2
+      - hda2
+    precondition_type: image
+  - dest: /bin/
+    name: /data/tapper/live/repository/packages/kernel/gen_initrd.sh
+    precondition_type: copyfile
+    protocol: local
+  - filename: kernel/sles11/osrc/linux-tip-2.6.38.i686.tgz
+    precondition_type: package
+  - filename: /bin/gen_initrd.sh
+    precondition_type: exec
+    options: 
+      - 2.6.38
+  - precondition_type: copyfile
+    name: /data/tapper/autoreport/generic_test.sh
+    dest: /
+    protocol: local
+  - precondition_type: testprogram
+    program: /generic_test.sh
+    timeout: 300 # 5 minutes

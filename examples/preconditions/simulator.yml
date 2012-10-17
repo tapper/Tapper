@@ -1,0 +1,36 @@
+--- 
+precondition_type: hint
+arch: linux64
+ssh: 1
+--- 
+precondition_type: copyfile
+dest: /tmp/images/ubuntu_image_new.hdd
+name: fileserver:/export/image_files/official_testing/ubuntu_image_new.hdd
+protocol: nfs
+--- 
+precondition_type: package
+filename: tapperutils/opt-tapper64.tar.gz
+mountfile: /tmp/images/ubuntu_image_new.hdd
+mountpartition: p1
+--- 
+precondition_type: prc
+config: 
+  guest_number: 0
+  testprogram_list: 
+    - 
+      execname: /opt/tapper/python/bin/metainfo
+      timeout_testprogram: 2000
+      runtime: 1000
+    - 
+      execname: /opt/tapper/bin/py_parselog
+      runtime: 50
+      timeout_testprogram: 200
+mountfile: /tmp/images/ubuntu_image_new.hdd
+mountpartition: p1
+--- 
+precondition_type: testprogram
+program: /bin/tapper_start_simulator.sh
+parameters: 
+  - -r 1
+  - -v
+timeout: 4800

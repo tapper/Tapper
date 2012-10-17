@@ -1,0 +1,38 @@
+--- 
+precondition_type: virt
+name: automatically generated KVM test
+host: 
+  root: 
+    grub_text: "timeout 2\n\ntitle RedHat Testing\nkernel /tftpboot/rhel/7.0/x86_64/vmlinuz ks=http://tapper/autoinstall/rhel/7.0/x86_64/kvm.ks ksdevice=link console=ttyS0,115200 $TAPPER_OPTIONS\ninitrd /tftpboot/rhel/7.0/x86_64/initrd.img\n"
+    name: autoinstall-kvm-rhel-7
+    precondition_type: autoinstall
+    timeout: 10000
+  testprogram_list: 
+    - 
+      execname: /opt/tapper/bin/metainfo
+      runtime: 50
+      timeout_testprogram: 300
+guests: 
+  - 
+    config: 
+      dest: /virt
+      exec: /virt/guest1_startscript.sh
+      name: tapper:/data/tapper/live/repository/configs/kvm/guest1_startscript.sh
+      precondition_type: copyfile
+      protocol: nfs
+    root: 
+      arch: linux32
+      mountfile: /virt/guest1_image.img
+      mounttype: raw
+      precondition_type: package
+      target_directory: /virt
+      url: nfs://fileserver:/export/image_files/official_testing/tared_testimages/opensuse_11_4_32b_raw.tgz
+    testprogram_list: 
+      - 
+        execname: /opt/tapper/python/bin/py_ltp
+        runtime: 28800
+        timeout_testprogram: 36000
+      - 
+        execname: /opt/tapper/bin/py_parselog
+        runtime: 50
+        timeout_testprogram: 200

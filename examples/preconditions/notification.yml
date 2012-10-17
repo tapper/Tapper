@@ -1,0 +1,4 @@
+persist: 0
+event: testrun_finished
+filter: testrun('id') == 42
+comment: Testrun id 42 finished

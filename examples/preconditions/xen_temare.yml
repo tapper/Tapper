@@ -1,0 +1,55 @@
+name: automatically generated Xen test
+precondition_type: virt
+host:
+  root:
+    arch: linux64
+    image: suse/suse_sles10_sp2_64b_smp_raw.tar.gz
+    mount: /
+    partition: 
+    - sda2
+    - testing
+    - hda2
+    precondition_type: image
+  preconditions:
+  - filename: /data/tapper/live/repository/packages/xen/builds/x86_64/xen-unstable/xen-unstable.x86_64.tgz
+    precondition_type: package
+  - filename: tapperutils/sles10/xen_installer_suse.tar.gz
+    precondition_type: package
+  - filename: /bin/xen_installer_suse.pl
+    precondition_type: exec
+  - line: fileserver:/home /home nfs auto,defaults 0 0
+    precondition_type: fstab
+guests:
+- config:
+    dest: /xen/images/
+    filename: /xen/images/guest1_xenconfig.svm
+    name: tapper:/data/tapper/live/repository/configs/xen/guest1_xenconfig.svm
+    precondition_type: copyfile
+    protocol: nfs
+  root:
+    dest: /xen/images/
+    name: fileserver:/export/image_files/official_testing/redhat_rhel5u5_64b_qcow.img
+    precondition_type: copyfile
+    protocol: nfs
+    arch: linux64
+    mounttype: raw
+    mountfile: /xen/images/guest1_image.img
+  testprogram:
+    execname: /opt/tapper/bin/tapper_testsuite_parselogs
+    timeout_testprogram: 10800
+    runtime: 3600
+---
+precondition_type: grub
+shortname: grub
+config: |
+ serial --unit=0 --speed=115200
+ terminal serial
+ timeout 3
+ default 0
+
+ title XEN
+  root $grubroot
+  kernel /boot/xen.gz console=com1 com1=115200 watchdog nmi=fatal loglvl=all guest_loglvl=all noreboot
+  module /boot/vmlinuz-2.6.18.8-xen root=$root console=ttyS0,115200 xencons=ttyS
+  module /boot/initrd-2.6.18.8-xen
+
