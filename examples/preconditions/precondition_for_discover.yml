@@ -1,0 +1,53 @@
+--- 
+arch: linux64
+image: suse/sles11_sp1_x86-64_baseimage.tar.gz
+mount: /
+partition: 
+  - testing
+  - sda2
+  - hda2
+precondition_type: image
+--- 
+dest: /bin/
+name: /data/tapper/live/repository/packages/tapperutils/kernel/gen_initrd.sh
+precondition_type: copyfile
+protocol: local
+--- 
+dest: /bin/
+name: /data/tapper/live/repository/testprograms/autoreport/tapper-run-autoreport
+precondition_type: copyfile
+protocol: local
+--- 
+filename: kernel/sles11/x86_64/stable/linux-stable-3.3.2012-03-31.x86_64.tgz
+precondition_type: package
+--- 
+## Changed to packages compared to upstream:
+## * cd $(dirname $0) as first line in Install-AMD-APP.sh, so we don't need to call it from current dir
+filename: opencl/amd-sdk/AMD-APP-SDK-v2.6-lnx64.tgz
+precondition_type: package
+target_directory: /tmp/opencl/
+---
+filename: /tmp/opencl/Install-AMD-APP.sh
+precondition_type: exec
+--- 
+filename: /bin/gen_initrd.sh
+options: 
+  - 3.3.0-c16fa4f2-stable
+precondition_type: exec
+---
+dest: /etc/
+name: /etc/resolv.conf
+precondition_type: copyfile
+protocol: local
+---
+filename: /opt/tapper/perl/perls/current/bin/cpan
+options:
+  - OpenCL
+environment: 
+  PASTHRU_INC: '-I/opt/AMDAPP/include/'
+precondition_type: exec
+--- 
+config: "serial --unit=0 --speed=115200\nterminal serial\ntimeout 3\ndefault 0\ntitle osrc kernel 3.3.0-c16fa4f2-stable\n root $grubroot\n kernel /boot/vmlinuz root=$root console=ttyS0,115200 earlyprintk=ttyS0,115200 debug ignore_loglevel\n initrd /boot/initrd\n"
+precondition_type: grub
+---
+precondition_type: installer_stop
