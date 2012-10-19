@@ -1,4 +1,13 @@
 # tapper-mandatory-fields: kernel_version
+#
+# Example of a kernel boot macro precondition.
+# It demonstrates how to use Template Toolkit to make parts of the
+# precondition file configurable. In this case it allows to provide the
+# kernel during the tapper-testrun new command.
+#
+# Note: The "tapper-mandatory-fields" above is not part of the
+# comment. It is relevant for Tapper. It tells Tapper which fields have
+# to be given in the CLI call.
 ---
 arch: linux64
 image: suse/suse_sles10_64b_smp_raw.tar.gz
@@ -28,3 +37,8 @@ options:
 precondition_type: testprogram
 program: /opt/tapper/bin/tapper_testsuite/py_llc
 timeout: 72000
+
+# call with
+# tapper-testrun new --macroprecond ./kernel_boot.mpc -Dḱernel_version=3.1.0
+# OR
+# tapper-testrun new --macroprecond ./kernel_boot.mpc -Dḱernel_version=3.1.0 -Dkernelpkg = /opt/tapper/packages/kernel/linux-3.1.0.tar.gz
