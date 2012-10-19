@@ -1,0 +1,44 @@
+# tapper-mandatory-fields: timeout,script
+#
+# This macro precodition installs a testrun with the bigfish test
+# program. It uses an image based approach for installation. The
+# alternatives are autoinstall and Cobbler. Both alternatives make
+# simpler preconditions but need more preparation up front. 
+#
+# Preparation:
+# * put your image into $CONFIG->{paths}{image_dir}
+# * put the gen_initrd.sh into the directory given below
+# * put your kernel package into $CONFIG->{paths}{package_dir}
+# * put the bigfish test script to /data/tapper/packages/bigfish.sh
+# 
+# Execute with
+# tapper-testrun new --macropreciondition bigfish.mpc --Dscript=/data/tapper/packages/bigfish.sh -Dtimeout=100
+#
+---
+arch: linux64
+image: suse/suse_sles10_64b_smp_raw.tar.gz
+mount: /
+partition: testing
+precondition_type: image
+---
+precondition_type: copyfile
+name: /data/tapper/live/repository/packages/tapperutils/kernel/gen_initrd.sh
+dest: /bin/
+protocol: local
+---
+precondition_type: package
+filename: kernel/x86_64/linux-2.6.32_rc6.x86_64.tgz
+---
+precondition_type: exec
+filename: /bin/gen_initrd.sh
+options:
+  - 2.6.32-rc6
+---
+precondition_type: copyfile
+name: [% script %]
+dest: /bin/tapper-testscript
+protocol: nfs
+---
+precondition_type: testprogram
+program: /bin/tapper-testscript
+timeout: [% timeout %]

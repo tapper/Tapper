@@ -1,0 +1,10 @@
+#! mason <<EOTEMPLATE
+% # search for suite with name 'BigFish', find tap somwhere below these reports
+% # and data somwhere below what tap found, return all results as an array
+% my @results = reportdata '{ "suite.name" => "BigFish" } :: /';
+% use Data::Dumper;
+BogoMIPS found by bigfish tests:
+% foreach my $result (@results) {
+  <% ($result ~~ dpath '//hostname')->[0] %>: <% ($result ~~ dpath '//BogoMIPS')->[0] %>
+% }
+EOTEMPLATE

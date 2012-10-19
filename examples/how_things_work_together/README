@@ -1,0 +1,13 @@
+This is an example of test programs for Tapper together with everything
+needed for Tapper test automation.
+
+
+           Files
+           =====
+
+bigfish.sh             - test script
+bigfish_autoreport.sh  - test script rewritten with autoreport
+bigfish.mpc            - macro precondition to have the automation run the
+                         bigfish test
+report.mas             - Mason file to search for bigfish with the
+                         report framework
