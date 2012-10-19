@@ -1,3 +1,8 @@
+# Example of a kernel boot macro precondition.
+# It show you, how to have kernel_boot.mpc without using the Template
+# Toolkit functionality. This makes the precondition file easier but
+# less configurable.
+#
 ---
 arch: linux64
 image: suse/suse_sles10_64b_smp_raw.tar.gz
@@ -26,3 +31,5 @@ options:
 precondition_type: testprogram
 program: /opt/tapper/testprogram
 timeout: 72
+# call with
+# tapper-testrun new --macroprecond ./kernel_boot.mpc
