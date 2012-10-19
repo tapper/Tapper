@@ -1,8 +1,28 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+        * Databases
+        - refactoring to also work with PostgreSQL
 
-4.0       2012-05-16
+        * Automation
+        - scheduler 10x speedup
+        - first Cobbler support
+        - host blacklisting per queue
+
+        * Tools
+        - CLI consolidation/harmonization
+
+        * Documentation
+        - migrated to POD for maintainability
+        - complex precondition and testplan examples
+
+        * Misc
+        - overall cleanup in sync with upstream upgrades
+          * autotest 0.14.x
+          * Perl 5.16
+          * Catalyst 5.9
+
+4.0     2012-05-16
         * Automation
         - better linux32 chroot/exec support
         - persistent automation layer, based on event-queues
