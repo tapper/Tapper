@@ -9,7 +9,7 @@ package Tapper;
 
 Tapper is a modular, flexible and open test infrastructure.
 
-It's only primary assumption is the ubiquitous use of the B<Test
+Its only primary assumption is the ubiquitous use of the B<Test
 Anything Protocol> (TAP). Internally it is based on technology known
 from the CPAN testing infrastructure, extending it with automation and
 advanced querying.
