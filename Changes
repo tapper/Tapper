@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+4.1.1     2012-11-19
         - rerelease for CPAN ID TAPPER
         - new command 'tapper init':
           creates ~/.tapper/ with defaults and examples
