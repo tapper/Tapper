@@ -40,7 +40,7 @@
                              'bonnie', 'compilebench', 'linus_stress',
                              'fsstress', 'ltp', 'stress' ] %]
 [%- unused_autotest_tests = [ 'sysbench', 'dacapo', 'unixbench5' ] %][%# --- dysfunctional --- %]
-[%- distro_list = [rhel_6.2_64',
+[%- distro_list = ['rhel_6.2_64',
                    'fedora_15_64',
                    'sles_11.2_64',
                    'opensuse_12.1_64',
