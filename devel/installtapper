@@ -1,0 +1,63 @@
+#! /bin/bash
+
+# -----------------------------------------------------------------
+#
+# This file is behind http://tapper-testing.org/installtapper to be
+# used as install-everything installer:
+#
+#   curl -kL http://tapper-testing.org/installtapper | bash
+#
+# -----------------------------------------------------------------
+
+if [ -e ~/.tapper ] ; then
+    echo "You already have a ~/.tapper/ -- for updating it please use"
+    echo "  tapper init --default"
+    echo "Exiting."
+    exit 1
+fi
+
+echo ""
+echo "**************************************************"
+echo ""
+echo "Please install dependencies first, like this:"
+echo ""
+echo "sudo apt-get install gcc"
+echo "sudo apt-get install make"
+echo "sudo apt-get install libsqlite3-dev"
+echo "sudo apt-get install libexpat1-dev"
+echo "sudo apt-get install libxml2-dev"
+echo "sudo apt-get install libz-dev"
+echo "sudo apt-get install libgmp-dev"
+echo ""
+echo "**************************************************"
+echo ""
+sleep 3
+
+curl -kL http://install.perlbrew.pl | bash
+source ~/perl5/perlbrew/etc/bashrc
+perlbrew install perl-5.16.3
+perlbrew use perl-5.16.3
+
+echo ""
+echo "**************************************************"
+echo ""
+echo "Don't forget to add this line to your ~/.bashrc:"
+echo ""
+echo "  source ~/perl5/perlbrew/etc/bashrc"
+echo ""
+echo "and setting your Perl version permanently with"
+echo ""
+echo "  perlbrew switch perl-5.16.3"
+echo ""
+echo "**************************************************"
+echo ""
+sleep 5
+
+curl -L http://cpanmin.us | perl - App::cpanminus
+cpanm --force Template::Plugin::Autoformat
+cpanm Catalyst::Action::RenderView
+cpanm Task::Tapper::Hello::World
+cpanm Task::Tapper::Hello::World::Automation
+cpanm SCHWIGON/TAP-Harness-Archive-0.15.tar.gz
+
+( echo "y" ; echo "y" ) | tapper init --default
