@@ -35,8 +35,17 @@ sleep 3
 
 curl -kL http://install.perlbrew.pl | bash
 source ~/perl5/perlbrew/etc/bashrc
-perlbrew install perl-5.16.3
-perlbrew use perl-5.16.3
+perlbrew install --as tapper-perl perl-5.16.3
+perlbrew use tapper-perl
+
+curl -L http://cpanmin.us | perl - App::cpanminus
+cpanm --force Template::Plugin::Autoformat
+cpanm Catalyst::Action::RenderView
+cpanm Task::Tapper::Hello::World
+cpanm Task::Tapper::Hello::World::Automation
+cpanm SCHWIGON/TAP-Harness-Archive-0.15.tar.gz
+
+( echo "y" ; echo "y" ) | tapper init --default
 
 echo ""
 echo "**************************************************"
@@ -47,17 +56,8 @@ echo "  source ~/perl5/perlbrew/etc/bashrc"
 echo ""
 echo "and setting your Perl version permanently with"
 echo ""
-echo "  perlbrew switch perl-5.16.3"
+echo "  perlbrew switch tapper-perl"
 echo ""
 echo "**************************************************"
 echo ""
-sleep 5
 
-curl -L http://cpanmin.us | perl - App::cpanminus
-cpanm --force Template::Plugin::Autoformat
-cpanm Catalyst::Action::RenderView
-cpanm Task::Tapper::Hello::World
-cpanm Task::Tapper::Hello::World::Automation
-cpanm SCHWIGON/TAP-Harness-Archive-0.15.tar.gz
-
-( echo "y" ; echo "y" ) | tapper init --default
