@@ -50,11 +50,11 @@ is a bit Linux centric in its use of external dependencies.
 
 =over 4
 
-=item L<Tapper homepage on amd64.org|http://www.amd64.org/support/automated-test-infrastructure.html>
+=item L<Tapper homepage |http://www.tapper-testing.org>
 
-=item L<Tapper libs on github|https://github.com/amd>
+=item L<Tapper libs on github|https://github.com/tapper>
 
-=item L<Tapper wiki on github|https://github.com/amd/Tapper/wiki>
+=item L<Tapper wiki on github|https://github.com/tapper/Tapper/wiki>
 
 =back
 
@@ -70,9 +70,11 @@ on
 
   irc.freenode.net
 
-=head2 Mailing List
+although we are a bit busy these days (yes, working on&with Tapper)
+and suggest to first contact us per email.
 
-There is a mailing list
-L<tapper@amd64.org|http://www.amd64.org/mailman/listinfo/tapper/>.
+=head2 email
+
+tapper@tapper-testing.org
 
 =cut
