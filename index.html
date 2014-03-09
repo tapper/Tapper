@@ -3,37 +3,54 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <meta name="viewport" content="width=640" />
+
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
     <title>Tapper by tapper</title>
   </head>
 
   <body>
-    <div id="container">
-      <div class="inner">
+    <a id="forkme_banner" href="https://github.com/tapper/Tapper">View on GitHub</a>
+    <div class="shell">
 
-        <header>
-          <h1>Tapper</h1>
-          <h2>All-embracing test infrastructure</h2>
-        </header>
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>Tapper</h1>
+            <h2>All-embracing test infrastructure</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
 
-        <section id="downloads" class="clearfix">
-          <a href="https://github.com/tapper/Tapper/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/tapper/Tapper/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/tapper/Tapper" id="view-on-github" class="button"><span>View on GitHub</span></a>
-        </section>
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/tapper/Tapper/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/tapper/Tapper/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
 
-        <hr>
 
-        <section id="main_content">
-          <h3>Welcome to Tapper</h3>
+      <span class="banner-fix"></span>
 
-<h4>Tapper is...</h4>
+
+      <section id="main_content">
+        <h3>
+<a name="welcome-to-tapper" class="anchor" href="#welcome-to-tapper"><span class="octicon octicon-link"></span></a>Welcome to Tapper</h3>
+
+<h4>
+<a name="tapper-is" class="anchor" href="#tapper-is"><span class="octicon octicon-link"></span></a>Tapper is...</h4>
 
 <ul>
 <li>a test <em>infrastructure</em>.</li>
@@ -42,15 +59,17 @@
 <li>able to unify lots of different use-cases under a common umbrella</li>
 <li>generic enough to compete with the future</li>
 <li>mature</li>
-</ul><h4>Tapper originated...</h4>
+</ul><h4>
+<a name="tapper-originated" class="anchor" href="#tapper-originated"><span class="octicon octicon-link"></span></a>Tapper originated...</h4>
 
 <p>at AMD's <a href="http://amd64.org">Operating System Research Center</a> where it
-serves as umbrella for all QA. It integrates 10+ years of QA know-how
-and Linux testing expertise since 2008. It also provides the
-technology behind the Perl benchmarking infrastructure
-<a href="http://perlformance.net">Perl::Formance</a>.</p>
+served as umbrella for all QA. It integrates 10+ years of QA know-how
+and Linux testing expertise since 2008. As of 2014 it is in active use and
+development at AWS. It also provides the technology behind the Perl 
+benchmarking infrastructure <a href="http://perlformance.net">Perl::Formance</a>.</p>
 
-<h4>Tapper provides...</h4>
+<h4>
+<a name="tapper-provides" class="anchor" href="#tapper-provides"><span class="octicon octicon-link"></span></a>Tapper provides...</h4>
 
 <ul>
 <li>extreme continuous integration through setting up complete machines
@@ -65,19 +84,22 @@ network tests</li>
 forensics</li>
 <li>a powerful scheduler to maximize utilization of a machine pool with
 different use-cases organized in bandwidth-driven queues</li>
-</ul><h4>Tapper APIs...</h4>
+</ul><h4>
+<a name="tapper-apis" class="anchor" href="#tapper-apis"><span class="octicon octicon-link"></span></a>Tapper APIs...</h4>
 
 <ul>
 <li>are easy, without requiring dependencies to talk to them</li>
 <li>allow integration of your existing infrastructure with nothing more
 like shell scripts using "echo" and "netcat"</li>
-</ul><h4>Tapper encourages...</h4>
+</ul><h4>
+<a name="tapper-encourages" class="anchor" href="#tapper-encourages"><span class="octicon octicon-link"></span></a>Tapper encourages...</h4>
 
 <p>the use of language diversity for writing tests by building upon TAP,
 the mature "Test Anything Protocol", supported in about 20 programming
 languages.</p>
 
-<h4>Tapper co-operates...</h4>
+<h4>
+<a name="tapper-co-operates" class="anchor" href="#tapper-co-operates"><span class="octicon octicon-link"></span></a>Tapper co-operates...</h4>
 
 <p>with</p>
 
@@ -86,7 +108,8 @@ languages.</p>
 <li>Codespeed</li>
 <li>TaskJuggler</li>
 <li>any TAP emitters</li>
-</ul><h4>Related material</h4>
+</ul><h4>
+<a name="related-material" class="anchor" href="#related-material"><span class="octicon octicon-link"></span></a>Related material</h4>
 
 <ul>
 <li>
@@ -106,15 +129,22 @@ at YAPC::EU 2009</li>
 <li>Video netcast about Tapper at Randal Schwartz' <a href="http://twit.tv/show/floss-weekly/241">FLOSS weekly</a>
 </li>
 </ul>
-        </section>
+      </section>
 
-        <footer>
-          Tapper is maintained by <a href="https://github.com/tapper">tapper</a><br>
-          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.
-        </footer>
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/tapper">tapper</a> can be found on <a href="https://github.com/tapper/Tapper">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
+      </footer>
 
-        
-      </div>
     </div>
+
+    
   </body>
 </html>
