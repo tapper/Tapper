@@ -55,10 +55,10 @@ with
 
 #### Related material
 
-* [Overview](http://www.amd64.org/fileadmin/user_upload/pub/linuxcon_eu_2011_linux_and_virtualization_testing_with_tapper.pdf)
+* [Overview](http://www.tapper-testing.org/docs/linuxcon_eu_2011_linux_and_virtualization_testing_with_tapper.pdf)
   presentation at Linuxcon Europe 2011
-* [TAP Juggling](http://amd64.org/fileadmin/user_upload/pub/yapc_eu_2011_tapjuggling.pdf)
+* [TAP Juggling](http://www.tapper-testing.org/docs/yapc_eu_2011_tapjuggling.pdf)
   at YAPC::EU 2011
-* [Query API](http://www.amd64.org/fileadmin/user_upload/pub/yapc_eu_2009_cinderella_tap.pdf)
+* [Query API](http://www.tapper-testing.org/docs/yapc_eu_2009_cinderella_tap.pdf)
   at YAPC::EU 2009
-* [Tapper on github](http://github.com/amd)
+* [Tapper on github](http://github.com/tapper)
