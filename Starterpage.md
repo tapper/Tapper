@@ -11,7 +11,7 @@
 
 #### Tapper originated...
 
-at AMD's [Operating System Research Center](http://amd64.org) where it
+at AMD's [Operating System Research Center](http://developer.amd.com/tools-and-sdks/open-source/tapper/) where it
 serves as umbrella for all QA. It integrates 10+ years of QA know-how
 and Linux testing expertise since 2008. It is now also the
 infrastructure behind the Perl benchmarking infrastructure
