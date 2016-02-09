@@ -1,6 +1,40 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+        - Complete benchmarking sub system, consisting of
+          * key/value schema to describe data points, usually for benchmark results
+          * corresponding backend store, scaling to millions of entries
+          * dedicated query api to fetch data points by key/values
+          * native charting in Web UI (to replace 100% of codespeed and typical gnuplot uses)
+          * REST-like data export of those data
+        - Scale-up
+          * to millions of testruns, reports, and data points
+          * thousands of testruns running at the same time
+          * dedicated MySQL optimizations
+        - Pool hosts
+          * hide multiple "anonymous" machines behind a single machine name
+          * define quota how many of such hosts of a pool can run at same time
+          * think of a cloud of instances
+        - Command-line interface harmonized
+          * less scattered tools
+          * just one single frontend command "tapper"
+        - Testplan improvements
+          * merged feature set with "interdependent scenarios"
+          * better preview/debugging support
+          * REST api to submit tests and testplans
+        - Web UI improvements
+          * modernized (yes, more Javascript)
+          * optimizations for speed and traffic
+          * more powerful navigation and filters
+          * UI to maintain continuous testrun rotation (pause, continue, edit, delete, clone)
+        - Tapper-autoreport/bash-test-utils
+          * better separation from Tapper via plugins/hooks
+          * support Tapper benchmarking
+        - General refactoring
+          * Hacking - raw SQL support for optional performance tweaks
+          * more plugin'ification, to separate internal systems
+          * merged the two databases, which makes the automation layer better integrated
+          * database connection re-use (allowing thousands of testruns at the same time)
 
 4.1.1     2012-11-19
         - rerelease for CPAN ID TAPPER
